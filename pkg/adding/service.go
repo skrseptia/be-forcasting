@@ -1,11 +1,11 @@
-package listing
+package adding
 
 type RepositoryMySQL interface {
-	ReadUser(User) (User, error)
+	CreateUser(User) (uint, error)
 }
 
 type Service interface {
-	GetUser(User) (User, error)
+	AddUser(User) (User, error)
 }
 
 type service struct {
@@ -16,12 +16,12 @@ func NewService(rmy RepositoryMySQL) Service {
 	return &service{rmy}
 }
 
-func (s *service) GetUser(lu User) (User, error) {
+func (s *service) AddUser(au User) (User, error) {
 	var err error
-	lu, err = s.rmy.ReadUser(lu)
+	au.ID, err = s.rmy.CreateUser(au)
 	if err != nil {
-		return lu, err
+		return au, err
 	}
 
-	return lu, nil
+	return au, nil
 }

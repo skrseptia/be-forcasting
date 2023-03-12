@@ -2,8 +2,11 @@ package main
 
 import (
 	"food_delivery_api/config"
+	"food_delivery_api/pkg/adding"
+	"food_delivery_api/pkg/editing"
 	"food_delivery_api/pkg/http/rest"
 	"food_delivery_api/pkg/listing"
+	"food_delivery_api/pkg/removing"
 	"food_delivery_api/pkg/storage/mysql"
 	"log"
 	"net"
@@ -53,9 +56,12 @@ func run(goEnv string) {
 	}
 
 	// Handler setup
+	adder := adding.NewService(rmy)
+	editer := editing.NewService(rmy)
 	lister := listing.NewService(rmy)
+	remover := removing.NewService(rmy)
 
-	r := rest.Handler(lister)
+	r := rest.Handler(adder, editer, lister, remover)
 
 	host := config.Glb.Serv.Host
 	if host == "" {
