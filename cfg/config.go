@@ -1,4 +1,4 @@
-package config
+package cfg
 
 import (
 	"log"
@@ -9,8 +9,8 @@ import (
 )
 
 type Global struct {
-	App Application
-	My  MySQL `yaml:"mysql"`
+	App  Application
+	My   MySQL  `yaml:"mysql"`
 	Serv Server `yaml:"server"`
 }
 
@@ -29,9 +29,9 @@ type Server struct {
 }
 
 var (
-	Glb Global
-	App Application
-	My  MySQL
+	Glb  Global
+	App  Application
+	My   MySQL
 	Serv Server
 )
 

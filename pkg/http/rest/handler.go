@@ -1,16 +1,13 @@
 package rest
 
 import (
-	"food_delivery_api/pkg/adding"
-	"food_delivery_api/pkg/editing"
-	"food_delivery_api/pkg/listing"
-	"food_delivery_api/pkg/removing"
+	"food_delivery_api/pkg/svc"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Handler(a adding.Service, e editing.Service, l listing.Service, r removing.Service) *gin.Engine {
+func Handler(s svc.Service) *gin.Engine {
 	router := gin.Default()
 
 	// Public API
@@ -20,16 +17,17 @@ func Handler(a adding.Service, e editing.Service, l listing.Service, r removing.
 	v1 := router.Group("api/v1")
 	{
 		// Adding
-		v1.POST("/users", addUser(a))
+		v1.POST("/users", addUser(s))
 
 		// Editing
-		v1.PUT("/users", editUser(e))
+		v1.PUT("/users/:id", editUser(s))
 
 		// Listing
-		v1.GET("/users/:id", getUser(l))
+		v1.GET("/users", getUsers(s))
+		v1.GET("/users/:id", getUser(s))
 
 		// Removing
-		v1.DELETE("/users", removeUser(r))
+		v1.DELETE("/users/:id", removeUser(s))
 	}
 
 	return router

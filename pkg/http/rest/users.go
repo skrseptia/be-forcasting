@@ -2,80 +2,92 @@ package rest
 
 import (
 	"errors"
-	"food_delivery_api/pkg/adding"
-	"food_delivery_api/pkg/editing"
-	"food_delivery_api/pkg/listing"
-	"food_delivery_api/pkg/removing"
-	"food_delivery_api/pkg/util"
+	"food_delivery_api/pkg/http/res"
+	"food_delivery_api/pkg/storage/mysql/model"
+	"food_delivery_api/pkg/svc"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-func addUser(a adding.Service) gin.HandlerFunc {
+func addUser(s svc.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var au adding.User
-
-		err := c.ShouldBindJSON(&au)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, util.Response{Error: err.Error()})
+		var body model.User
+		if err := c.ShouldBindJSON(&body); err != nil {
+			c.JSON(http.StatusBadRequest, res.Response{Error: err.Error()})
 			return
 		}
 
-		au, err = a.AddUser(au)
+		obj, err := s.AddUser(body)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, util.Response{Error: err.Error()})
+			c.JSON(http.StatusBadRequest, res.Response{Error: err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, util.Response{
+		c.JSON(http.StatusOK, res.Response{
 			Success: true,
-			Data:    au,
+			Data:    obj,
 		})
 
 	}
 }
 
-func editUser(e editing.Service) gin.HandlerFunc {
+func editUser(s svc.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"status": "OK",
 		})
+	}
+}
+
+func getUsers(s svc.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var list []model.User
+		var err error
+
+		if list, err = s.GetUsers(); err != nil {
+			c.JSON(http.StatusBadRequest, res.Response{Error: err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, res.Response{
+			Success: true,
+			Data:    list,
+		})
 
 	}
 }
 
-func getUser(l listing.Service) gin.HandlerFunc {
+func getUser(s svc.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var lu listing.User
+		var body model.User
 
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, util.Response{Error: errors.New("id must be uint").Error()})
+			c.JSON(http.StatusBadRequest, res.Response{Error: errors.New("id must be uint").Error()})
 			return
 		}
-		lu.ID = uint(id)
+		body.ID = uint(id)
 
-		lu, err = l.GetUser(lu)
+		obj, err := s.GetUser(body)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, util.Response{Error: err.Error()})
+			c.JSON(http.StatusBadRequest, res.Response{Error: err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, util.Response{
+		c.JSON(http.StatusOK, res.Response{
 			Success: true,
-			Data:    lu,
+			Data:    obj,
 		})
 
 	}
 }
 
-func removeUser(r removing.Service) gin.HandlerFunc {
+func removeUser(s svc.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"status": "OK",
 		})
-
 	}
 }
