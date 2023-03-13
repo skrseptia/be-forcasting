@@ -1,10 +1,8 @@
-package adding
-
-import "food_delivery_api/pkg/util"
+package model
 
 type User struct {
-	util.Model
-	FullName string `json:"full_name" uri:"id" binding:"required"`
+	Model
+	FullName string `json:"full_name" binding:"required"`
 	Email    string `json:"email" binding:"required" gorm:"unique"`
 	Password string `json:"password" binding:"required"`
 	ImageURL string `json:"image_url"`

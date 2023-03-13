@@ -10,15 +10,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func addUser(s svc.Service) gin.HandlerFunc {
+func addMerchant(s svc.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var body model.User
+		var body model.Merchant
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
 
-		res, err := s.AddUser(body)
+		res, err := s.AddMerchant(body)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -28,12 +28,12 @@ func addUser(s svc.Service) gin.HandlerFunc {
 	}
 }
 
-func getUsers(s svc.Service) gin.HandlerFunc {
+func getMerchants(s svc.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var res []model.User
+		var res []model.Merchant
 		var err error
 
-		if res, err = s.GetUsers(); err != nil {
+		if res, err = s.GetMerchants(); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
@@ -42,9 +42,9 @@ func getUsers(s svc.Service) gin.HandlerFunc {
 	}
 }
 
-func getUser(s svc.Service) gin.HandlerFunc {
+func getMerchant(s svc.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var res model.User
+		var res model.Merchant
 
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
@@ -53,7 +53,7 @@ func getUser(s svc.Service) gin.HandlerFunc {
 		}
 		res.ID = uint(id)
 
-		res, err = s.GetUser(res)
+		res, err = s.GetMerchant(res)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -63,9 +63,9 @@ func getUser(s svc.Service) gin.HandlerFunc {
 	}
 }
 
-func editUser(s svc.Service) gin.HandlerFunc {
+func editMerchant(s svc.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var body model.User
+		var body model.Merchant
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -78,7 +78,7 @@ func editUser(s svc.Service) gin.HandlerFunc {
 		}
 		body.ID = uint(id)
 
-		res, err := s.EditUser(body)
+		res, err := s.EditMerchant(body)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -88,9 +88,9 @@ func editUser(s svc.Service) gin.HandlerFunc {
 	}
 }
 
-func removeUser(s svc.Service) gin.HandlerFunc {
+func removeMerchant(s svc.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var body model.User
+		var body model.Merchant
 
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
@@ -99,7 +99,7 @@ func removeUser(s svc.Service) gin.HandlerFunc {
 		}
 		body.ID = uint(id)
 
-		res, err := s.RemoveUser(body)
+		res, err := s.RemoveMerchant(body)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return

@@ -1,4 +1,4 @@
-package config
+package cfg
 
 const (
 	AppName     = "food-delivery-api"

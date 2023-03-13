@@ -1,42 +1,39 @@
 package rest
 
 import (
-	"food_delivery_api/pkg/adding"
-	"food_delivery_api/pkg/editing"
-	"food_delivery_api/pkg/listing"
-	"food_delivery_api/pkg/removing"
+	"food_delivery_api/pkg/svc"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Handler(a adding.Service, e editing.Service, l listing.Service, r removing.Service) *gin.Engine {
-	router := gin.Default()
+func Handler(s svc.Service) *gin.Engine {
+	r := gin.Default()
 
 	// Public API
-	router.GET("/health", getHealthStatus)
+	r.GET("/health", getHealthStatus)
 
 	// Protected API
-	v1 := router.Group("api/v1")
+	v1 := r.Group("/api/v1")
 	{
-		// Adding
-		v1.POST("/users", addUser(a))
+		// Users
+		v1.POST("/users", addUser(s))
+		v1.GET("/users", getUsers(s))
+		v1.GET("/users/:id", getUser(s))
+		v1.PUT("/users/:id", editUser(s))
+		v1.DELETE("/users/:id", removeUser(s))
 
-		// Editing
-		v1.PUT("/users", editUser(e))
-
-		// Listing
-		v1.GET("/users/:id", getUser(l))
-
-		// Removing
-		v1.DELETE("/users", removeUser(r))
+		// Merchants
+		v1.POST("/merchants", addMerchant(s))
+		v1.GET("/merchants", getMerchants(s))
+		v1.GET("/merchants/:id", getMerchant(s))
+		v1.PUT("/merchants/:id", editMerchant(s))
+		v1.DELETE("/merchants/:id", removeMerchant(s))
 	}
 
-	return router
+	return r
 }
 
 func getHealthStatus(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"status": "OK",
-	})
+	c.JSON(http.StatusOK, gin.H{"status": "OK"})
 }
