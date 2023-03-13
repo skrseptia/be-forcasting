@@ -1,13 +1,30 @@
 package mysql
 
 import (
+	"errors"
 	"food_delivery_api/cfg"
-	"food_delivery_api/pkg/storage/mysql/model"
+	"food_delivery_api/pkg/model"
 	"log"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
+
+type RepositoryMySQL interface {
+	// Users
+	CreateUser(model.User) (model.User, error)
+	ReadUsers() ([]model.User, error)
+	ReadUser(model.User) (model.User, error)
+	UpdateUser(model.User) (model.User, error)
+	DeleteUser(model.User) (model.User, error)
+
+	// Merchants
+	CreateMerchant(model.Merchant) (model.Merchant, error)
+	ReadMerchants() ([]model.Merchant, error)
+	ReadMerchant(model.Merchant) (model.Merchant, error)
+	UpdateMerchant(model.Merchant) (model.Merchant, error)
+	DeleteMerchant(model.Merchant) (model.Merchant, error)
+}
 
 type Storage struct {
 	db *gorm.DB
@@ -23,12 +40,11 @@ func NewStorage(c cfg.MySQL) (*Storage, error) {
 		return s, err
 	}
 
-	// Migrate the schema
-	err = s.db.AutoMigrate(
-		&model.User{},
-	)
+	if err = autoMigrateDB(s); err != nil {
+		return nil, err
+	}
 
-	if err != nil {
+	if err = seedDB(s); err != nil {
 		return nil, err
 	}
 
@@ -37,52 +53,38 @@ func NewStorage(c cfg.MySQL) (*Storage, error) {
 	return s, nil
 }
 
-func (s *Storage) CreateUser(obj model.User) (uint, error) {
-	err := s.db.Create(&obj).Error
-	if err != nil {
-		return 0, err
+func seedDB(s *Storage) error {
+	var user model.User
+	err := s.db.First(&user, 1).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		user, err = s.CreateUser(model.User{
+			Model:    model.Model{},
+			FullName: "Super Admin",
+			Email:    "admin@mail.com",
+			Password: "password",
+			ImageURL: "",
+			Phone:    "+6281234567890",
+			Address:  "Jakarta",
+			UserType: "Admin",
+		})
+
+		if err != nil {
+			return err
+		}
+
+		log.Println("Super Admin Created", user)
 	}
 
-	return obj.ID, nil
+	return err
 }
 
-// func (s *Storage) UpdateUser(eu editing.User) (uint, error) {
+func autoMigrateDB(s *Storage) error {
+	// Migrate the schema
+	err := s.db.AutoMigrate(
+		&model.User{},
+		&model.Merchant{},
+	)
 
-// 	err := s.db.Create(&au).Error
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	return au.ID, nil
-// }
-
-func (s *Storage) ReadUsers() ([]model.User, error) {
-	var list []model.User
-
-	err := s.db.Find(&list).Error
-	if err != nil {
-		return list, err
-	}
-
-	return list, nil
+	return err
 }
-
-func (s *Storage) ReadUser(obj model.User) (model.User, error) {
-
-	err := s.db.First(&obj, obj.ID).Error
-	if err != nil {
-		return obj, err
-	}
-
-	return obj, nil
-}
-
-// func (s *Storage) DeleteUser(id int) (uint, error) {
-
-// 	err := s.db.Ge(&au).Error
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	return au.ID, nil
-// }

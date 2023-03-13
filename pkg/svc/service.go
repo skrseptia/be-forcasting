@@ -1,52 +1,30 @@
 package svc
 
-import "food_delivery_api/pkg/storage/mysql/model"
-
-type RepositoryMySQL interface {
-	CreateUser(model.User) (uint, error)
-	ReadUsers() ([]model.User, error)
-	ReadUser(model.User) (model.User, error)
-}
+import (
+	"food_delivery_api/pkg/model"
+	"food_delivery_api/pkg/storage/mysql"
+)
 
 type Service interface {
+	// User
 	AddUser(model.User) (model.User, error)
 	GetUsers() ([]model.User, error)
 	GetUser(model.User) (model.User, error)
+	EditUser(model.User) (model.User, error)
+	RemoveUser(model.User) (model.User, error)
+
+	// Merchant
+	AddMerchant(model.Merchant) (model.Merchant, error)
+	GetMerchants() ([]model.Merchant, error)
+	GetMerchant(model.Merchant) (model.Merchant, error)
+	EditMerchant(model.Merchant) (model.Merchant, error)
+	RemoveMerchant(model.Merchant) (model.Merchant, error)
 }
 
 type service struct {
-	rmy RepositoryMySQL
+	rmy mysql.RepositoryMySQL
 }
 
-func NewService(rmy RepositoryMySQL) Service {
+func NewService(rmy mysql.RepositoryMySQL) Service {
 	return &service{rmy}
-}
-
-func (s *service) AddUser(obj model.User) (model.User, error) {
-	var err error
-	obj.ID, err = s.rmy.CreateUser(obj)
-	if err != nil {
-		return obj, err
-	}
-
-	return obj, nil
-}
-
-func (s *service) GetUsers() ([]model.User, error) {
-	list, err := s.rmy.ReadUsers()
-	if err != nil {
-		return list, err
-	}
-
-	return list, nil
-}
-
-func (s *service) GetUser(obj model.User) (model.User, error) {
-	var err error
-	obj, err = s.rmy.ReadUser(obj)
-	if err != nil {
-		return obj, err
-	}
-
-	return obj, nil
 }

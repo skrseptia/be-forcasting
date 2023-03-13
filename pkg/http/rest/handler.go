@@ -8,33 +8,32 @@ import (
 )
 
 func Handler(s svc.Service) *gin.Engine {
-	router := gin.Default()
+	r := gin.Default()
 
 	// Public API
-	router.GET("/health", getHealthStatus)
+	r.GET("/health", getHealthStatus)
 
 	// Protected API
-	v1 := router.Group("api/v1")
+	v1 := r.Group("/api/v1")
 	{
-		// Adding
+		// Users
 		v1.POST("/users", addUser(s))
-
-		// Editing
-		v1.PUT("/users/:id", editUser(s))
-
-		// Listing
 		v1.GET("/users", getUsers(s))
 		v1.GET("/users/:id", getUser(s))
-
-		// Removing
+		v1.PUT("/users/:id", editUser(s))
 		v1.DELETE("/users/:id", removeUser(s))
+
+		// Merchants
+		v1.POST("/merchants", addMerchant(s))
+		v1.GET("/merchants", getMerchants(s))
+		v1.GET("/merchants/:id", getMerchant(s))
+		v1.PUT("/merchants/:id", editMerchant(s))
+		v1.DELETE("/merchants/:id", removeMerchant(s))
 	}
 
-	return router
+	return r
 }
 
 func getHealthStatus(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"status": "OK",
-	})
+	c.JSON(http.StatusOK, gin.H{"status": "OK"})
 }
