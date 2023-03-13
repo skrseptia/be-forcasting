@@ -24,6 +24,13 @@ type RepositoryMySQL interface {
 	ReadMerchant(model.Merchant) (model.Merchant, error)
 	UpdateMerchant(model.Merchant) (model.Merchant, error)
 	DeleteMerchant(model.Merchant) (model.Merchant, error)
+
+	// Products
+	CreateProduct(model.Product) (model.Product, error)
+	ReadProducts() ([]model.Product, error)
+	ReadProduct(model.Product) (model.Product, error)
+	UpdateProduct(model.Product) (model.Product, error)
+	DeleteProduct(model.Product) (model.Product, error)
 }
 
 type Storage struct {
@@ -53,6 +60,17 @@ func NewStorage(c cfg.MySQL) (*Storage, error) {
 	return s, nil
 }
 
+func autoMigrateDB(s *Storage) error {
+	// Migrate the schema
+	err := s.db.AutoMigrate(
+		&model.User{},
+		&model.Merchant{},
+		&model.Product{},
+	)
+
+	return err
+}
+
 func seedDB(s *Storage) error {
 	var user model.User
 	err := s.db.First(&user, 1).Error
@@ -63,7 +81,7 @@ func seedDB(s *Storage) error {
 			FullName: "Super Admin",
 			Email:    "admin@mail.com",
 			Password: "password",
-			ImageURL: "",
+			ImageURL: "www.image.com",
 			Phone:    "+6281234567890",
 			Address:  "Jakarta",
 			UserType: "Admin",
@@ -75,16 +93,6 @@ func seedDB(s *Storage) error {
 
 		log.Println("Super Admin Created", user)
 	}
-
-	return err
-}
-
-func autoMigrateDB(s *Storage) error {
-	// Migrate the schema
-	err := s.db.AutoMigrate(
-		&model.User{},
-		&model.Merchant{},
-	)
 
 	return err
 }

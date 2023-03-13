@@ -3,8 +3,8 @@ package main
 import (
 	"food_delivery_api/cfg"
 	"food_delivery_api/pkg/http/rest"
+	"food_delivery_api/pkg/service"
 	"food_delivery_api/pkg/storage/mysql"
-	"food_delivery_api/pkg/svc"
 	"log"
 	"net"
 	"os"
@@ -53,7 +53,7 @@ func run(goEnv string) {
 	}
 
 	// Handler setup
-	s := svc.NewService(rmy)
+	s := service.NewService(rmy)
 	r := rest.Handler(s)
 
 	host := cfg.Glb.Serv.Host

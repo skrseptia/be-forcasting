@@ -1,4 +1,4 @@
-package svc
+package service
 
 import (
 	"food_delivery_api/pkg/model"
