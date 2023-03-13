@@ -1,4 +1,4 @@
-package svc
+package service
 
 import (
 	"food_delivery_api/pkg/model"
@@ -19,6 +19,13 @@ type Service interface {
 	GetMerchant(model.Merchant) (model.Merchant, error)
 	EditMerchant(model.Merchant) (model.Merchant, error)
 	RemoveMerchant(model.Merchant) (model.Merchant, error)
+
+	// Product
+	AddProduct(model.Product) (model.Product, error)
+	GetProducts() ([]model.Product, error)
+	GetProduct(model.Product) (model.Product, error)
+	EditProduct(model.Product) (model.Product, error)
+	RemoveProduct(model.Product) (model.Product, error)
 }
 
 type service struct {

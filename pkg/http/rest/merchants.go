@@ -3,14 +3,14 @@ package rest
 import (
 	"errors"
 	"food_delivery_api/pkg/model"
-	"food_delivery_api/pkg/svc"
+	"food_delivery_api/pkg/service"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-func addMerchant(s svc.Service) gin.HandlerFunc {
+func addMerchant(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body model.Merchant
 		if err := c.ShouldBindJSON(&body); err != nil {
@@ -28,7 +28,7 @@ func addMerchant(s svc.Service) gin.HandlerFunc {
 	}
 }
 
-func getMerchants(s svc.Service) gin.HandlerFunc {
+func getMerchants(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var res []model.Merchant
 		var err error
@@ -42,7 +42,7 @@ func getMerchants(s svc.Service) gin.HandlerFunc {
 	}
 }
 
-func getMerchant(s svc.Service) gin.HandlerFunc {
+func getMerchant(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var res model.Merchant
 
@@ -63,7 +63,7 @@ func getMerchant(s svc.Service) gin.HandlerFunc {
 	}
 }
 
-func editMerchant(s svc.Service) gin.HandlerFunc {
+func editMerchant(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body model.Merchant
 		if err := c.ShouldBindJSON(&body); err != nil {
@@ -88,7 +88,7 @@ func editMerchant(s svc.Service) gin.HandlerFunc {
 	}
 }
 
-func removeMerchant(s svc.Service) gin.HandlerFunc {
+func removeMerchant(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body model.Merchant
 

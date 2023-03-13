@@ -1,13 +1,13 @@
 package rest
 
 import (
-	"food_delivery_api/pkg/svc"
+	"food_delivery_api/pkg/service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Handler(s svc.Service) *gin.Engine {
+func Handler(s service.Service) *gin.Engine {
 	r := gin.Default()
 
 	// Public API
@@ -29,6 +29,13 @@ func Handler(s svc.Service) *gin.Engine {
 		v1.GET("/merchants/:id", getMerchant(s))
 		v1.PUT("/merchants/:id", editMerchant(s))
 		v1.DELETE("/merchants/:id", removeMerchant(s))
+
+		// Products
+		v1.POST("/products", addProduct(s))
+		v1.GET("/products", getProducts(s))
+		v1.GET("/products/:id", getProduct(s))
+		v1.PUT("/products/:id", editProduct(s))
+		v1.DELETE("/products/:id", removeProduct(s))
 	}
 
 	return r
