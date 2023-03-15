@@ -62,8 +62,13 @@ func run(goEnv string) {
 		cfg.Glb.Serv.Host = host
 	}
 
-	log.Println("Server Running on", goEnv, "environment, (REST APIs) listening on", host+":"+cfg.Serv.Port)
-	log.Fatal("Error: Server failed to run - ", r.Run(":"+os.Getenv("PORT")))
+	if goEnv == "local" {
+		log.Println("Server Running on", goEnv, "environment, (REST APIs) listening on", host+":"+cfg.Serv.Port)
+		log.Fatal("Error: Server failed to run - ", r.Run(cfg.Serv.Host+":"+cfg.Serv.Port))
+	} else {
+		log.Println("Server Running on", goEnv, "environment, (REST APIs) listening on", host+":"+os.Getenv("PORT"))
+		log.Fatal("Error: Server failed to run - ", r.Run(":"+os.Getenv("PORT")))
+	}
 }
 
 func GetLocalIP() string {
