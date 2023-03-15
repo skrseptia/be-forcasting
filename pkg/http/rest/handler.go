@@ -2,15 +2,24 @@ package rest
 
 import (
 	"food_delivery_api/pkg/service"
-	"github.com/gin-contrib/cors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	cors "github.com/itsjamie/gin-cors"
 )
 
 func Handler(s service.Service) *gin.Engine {
 	r := gin.Default()
-	r.Use(cors.Default())
+
+	r.Use(cors.Middleware(cors.Config{
+		Origins:         "*",
+		Methods:         "GET, PUT, POST, DELETE",
+		RequestHeaders:  "Origin, Authorization, Content-Type",
+		ExposedHeaders:  "",
+		MaxAge:          12,
+		Credentials:     false,
+		ValidateHeaders: false,
+	}))
 
 	// Public API
 	r.GET("/health", getHealthStatus)
