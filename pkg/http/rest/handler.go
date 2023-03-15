@@ -1,8 +1,10 @@
 package rest
 
 import (
+	"food_delivery_api/pkg/middleware"
 	"food_delivery_api/pkg/service"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	cors "github.com/itsjamie/gin-cors"
@@ -10,22 +12,15 @@ import (
 
 func Handler(s service.Service) *gin.Engine {
 	r := gin.Default()
-
-	r.Use(cors.Middleware(cors.Config{
-		Origins:         "*",
-		Methods:         "GET, PUT, POST, DELETE",
-		RequestHeaders:  "Origin, Authorization, Content-Type",
-		ExposedHeaders:  "",
-		MaxAge:          12,
-		Credentials:     false,
-		ValidateHeaders: false,
-	}))
+	setupCORS(r)
 
 	// Public API
 	r.GET("/health", getHealthStatus)
+	r.POST("/api/v1/login", login(s))
 
 	// Protected API
 	v1 := r.Group("/api/v1")
+	v1.Use(middleware.JWT())
 	{
 		// Users
 		v1.POST("/users", addUser(s))
@@ -50,6 +45,18 @@ func Handler(s service.Service) *gin.Engine {
 	}
 
 	return r
+}
+
+func setupCORS(r *gin.Engine) {
+	r.Use(cors.Middleware(cors.Config{
+		Origins:         "*",
+		Methods:         "GET, PUT, PATCH, POST, DELETE, OPTIONS",
+		RequestHeaders:  "Origin, Authorization, Content-Type",
+		ExposedHeaders:  "",
+		MaxAge:          1 * time.Minute,
+		Credentials:     false,
+		ValidateHeaders: false,
+	}))
 }
 
 func getHealthStatus(c *gin.Context) {

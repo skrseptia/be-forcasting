@@ -35,6 +35,15 @@ func (s *Storage) ReadUser(obj model.User) (model.User, error) {
 	return obj, nil
 }
 
+func (s *Storage) ReadUserByEmailPassword(obj model.User) (model.User, error) {
+	err := s.db.Where(&obj).First(&obj).Error
+	if err != nil {
+		return obj, err
+	}
+
+	return obj, nil
+}
+
 func (s *Storage) UpdateUser(obj model.User) (model.User, error) {
 	err := s.db.Model(&obj).Updates(obj).Error
 	if err != nil {

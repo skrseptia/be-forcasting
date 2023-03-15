@@ -10,12 +10,17 @@ import (
 
 type Global struct {
 	App  Application
+	Aut  Auth   `yaml:"auth"`
 	My   MySQL  `yaml:"mysql"`
 	Serv Server `yaml:"server"`
 }
 
 type Application struct {
 	TLoc *time.Location
+}
+
+type Auth struct {
+	Key string `yaml:"key"`
 }
 
 type MySQL struct {
@@ -31,6 +36,7 @@ type Server struct {
 var (
 	Glb  Global
 	App  Application
+	Aut  Auth
 	My   MySQL
 	Serv Server
 )
@@ -49,6 +55,7 @@ func Load(file string) error {
 	}
 
 	App = Glb.App
+	Aut = Glb.Aut
 	My = Glb.My
 	Serv = Glb.Serv
 

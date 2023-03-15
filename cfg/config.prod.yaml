@@ -1,3 +1,6 @@
+auth:
+  key: supersecretkey
+
 mysql:
   dialect: mysql
   dsn: andhiga:adg222823@tcp(www.db4free.net:3306)/food_delivery_db?charset=utf8mb4&parseTime=True&loc=Local

@@ -31,6 +31,15 @@ func (s *service) GetUser(obj model.User) (model.User, error) {
 	return obj, nil
 }
 
+func (s *service) GetUserByEmailPassword(obj model.User) (model.User, error) {
+	obj, err := s.rmy.ReadUserByEmailPassword(obj)
+	if err != nil {
+		return obj, err
+	}
+
+	return obj, nil
+}
+
 func (s *service) EditUser(obj model.User) (model.User, error) {
 	obj, err := s.rmy.UpdateUser(obj)
 	if err != nil {

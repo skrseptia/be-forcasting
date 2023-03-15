@@ -10,6 +10,7 @@ type Service interface {
 	AddUser(model.User) (model.User, error)
 	GetUsers() ([]model.User, error)
 	GetUser(model.User) (model.User, error)
+	GetUserByEmailPassword(model.User) (model.User, error)
 	EditUser(model.User) (model.User, error)
 	RemoveUser(model.User) (model.User, error)
 

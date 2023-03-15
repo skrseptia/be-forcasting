@@ -15,6 +15,7 @@ type RepositoryMySQL interface {
 	CreateUser(model.User) (model.User, error)
 	ReadUsers() ([]model.User, error)
 	ReadUser(model.User) (model.User, error)
+	ReadUserByEmailPassword(model.User) (model.User, error)
 	UpdateUser(model.User) (model.User, error)
 	DeleteUser(model.User) (model.User, error)
 
