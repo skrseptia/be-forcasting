@@ -2,6 +2,7 @@ package rest
 
 import (
 	"food_delivery_api/pkg/service"
+	"github.com/gin-contrib/cors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,7 @@ import (
 
 func Handler(s service.Service) *gin.Engine {
 	r := gin.Default()
+	r.Use(cors.Default())
 
 	// Public API
 	r.GET("/health", getHealthStatus)
