@@ -2,7 +2,6 @@ package model
 
 type Merchant struct {
 	Model
-	UserID    uint    `json:"user_id" binding:"required"`
 	Name      string  `json:"name" binding:"required"`
 	Email     string  `json:"email" binding:"required"`
 	ImageURL  string  `json:"image_url"`
