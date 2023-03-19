@@ -34,6 +34,13 @@ type Service interface {
 	GetCategories(model.Categories) (model.Categories, error)
 	EditCategories(model.Categories) (model.Categories, error)
 	RemoveCategories(model.Categories) (model.Categories, error)
+
+	// Store
+	AddStore(model.Store) (model.Store, error)
+	GetStores() ([]model.Store, error)
+	GetStore(model.Store) (model.Store, error)
+	EditStore(model.Store) (model.Store, error)
+	RemoveStore(model.Store) (model.Store, error)
 }
 
 type service struct {
