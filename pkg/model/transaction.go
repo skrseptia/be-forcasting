@@ -4,6 +4,7 @@ type Transaction struct {
 	Model
 	NoTransaction string  `json:"no_transaction" `
 	Username      string  `json:"username" binding:"required"`
+	Customer      string  `json:"customer" binding:"required"`
 	Total         string  `json:"Total"`
 	Items         []Items `json:"items"`
 }
