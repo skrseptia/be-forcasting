@@ -2,10 +2,11 @@ package model
 
 type Product struct {
 	Model
-	MerchantID  string  `json:"merchant_id" binding:"required"`
+	Code        string  `json:"code" `
 	Name        string  `json:"name" binding:"required"`
 	Description string  `json:"description" binding:"required"`
 	ImageURL    string  `json:"image_url"`
+	Qty         float64 `json:"qty"  binding:"required"`
 	Price       float64 `json:"price" binding:"required"`
-	CategoryID  string  `json:"category_id" binding:"required"`
+	UOM         string  `json:"uom" binding:"required"`
 }

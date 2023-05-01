@@ -19,19 +19,19 @@ type RepositoryMySQL interface {
 	UpdateUser(model.User) (model.User, error)
 	DeleteUser(model.User) (model.User, error)
 
-	// Merchants
-	CreateMerchant(model.Merchant) (model.Merchant, error)
-	ReadMerchants() ([]model.Merchant, error)
-	ReadMerchant(model.Merchant) (model.Merchant, error)
-	UpdateMerchant(model.Merchant) (model.Merchant, error)
-	DeleteMerchant(model.Merchant) (model.Merchant, error)
-
 	// Products
 	CreateProduct(model.Product) (model.Product, error)
 	ReadProducts() ([]model.Product, error)
 	ReadProduct(model.Product) (model.Product, error)
 	UpdateProduct(model.Product) (model.Product, error)
 	DeleteProduct(model.Product) (model.Product, error)
+
+	// Products
+	CreateUom(model.Uom) (model.Uom, error)
+	ReadUoms() ([]model.Uom, error)
+	ReadUom(model.Uom) (model.Uom, error)
+	UpdateUom(model.Uom) (model.Uom, error)
+	DeleteUom(model.Uom) (model.Uom, error)
 
 	// Categories
 	CreateCategories(model.Categories) (model.Categories, error)
@@ -40,12 +40,12 @@ type RepositoryMySQL interface {
 	UpdateCategories(model.Categories) (model.Categories, error)
 	DeleteCategories(model.Categories) (model.Categories, error)
 
-	// Store
-	CreateStore(model.Store) (model.Store, error)
-	ReadStores() ([]model.Store, error)
-	ReadStore(model.Store) (model.Store, error)
-	UpdateStore(model.Store) (model.Store, error)
-	DeleteStore(model.Store) (model.Store, error)
+	// Products
+	CreateTransaction(model.Transaction) (model.Transaction, error)
+	ReadTransactions() ([]model.Transaction, error)
+	ReadTransaction(model.Transaction) (model.Transaction, error)
+	UpdateTransaction(model.Transaction) (model.Transaction, error)
+	DeleteTransaction(model.Transaction) (model.Transaction, error)
 }
 
 type Storage struct {
@@ -79,10 +79,10 @@ func autoMigrateDB(s *Storage) error {
 	// Migrate the schema
 	err := s.db.AutoMigrate(
 		&model.User{},
-		&model.Merchant{},
 		&model.Product{},
+		&model.Uom{},
 		&model.Categories{},
-		&model.Store{},
+		&model.Transaction{},
 	)
 
 	return err

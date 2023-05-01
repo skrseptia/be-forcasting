@@ -28,13 +28,6 @@ func Handler(s service.Service) *gin.Engine {
 		v1.PUT("/users/:id", editUser(s))
 		v1.DELETE("/users/:id", removeUser(s))
 
-		// Merchants
-		v1.POST("/merchants", addMerchant(s))
-		v1.GET("/merchants", getMerchants(s))
-		v1.GET("/merchants/:id", getMerchant(s))
-		v1.PUT("/merchants/:id", editMerchant(s))
-		v1.DELETE("/merchants/:id", removeMerchant(s))
-
 		// Products
 		v1.POST("/products", addProduct(s))
 		v1.GET("/products", getProducts(s))
@@ -42,19 +35,26 @@ func Handler(s service.Service) *gin.Engine {
 		v1.PUT("/products/:id", editProduct(s))
 		v1.DELETE("/products/:id", removeProduct(s))
 
-		// Category
+		// UOM
+		v1.POST("/uoms", addUom(s))
+		v1.GET("/uoms", getUoms(s))
+		v1.GET("/uoms/:id", getUom(s))
+		v1.PUT("/uoms/:id", editUom(s))
+		v1.DELETE("/uoms/:id", removeUom(s))
+
+		// Categories
 		v1.POST("/categories", addCategories(s))
 		v1.GET("/categories", getCategoriess(s))
 		v1.GET("/categories/:id", getCategories(s))
 		v1.PUT("/categories/:id", editCategories(s))
 		v1.DELETE("/categories/:id", removeCategories(s))
 
-		// Store
-		v1.POST("/stores", addStore(s))
-		v1.GET("/stores", getStores(s))
-		v1.GET("/stores/:id", getStore(s))
-		v1.PUT("/stores/:id", editStore(s))
-		v1.DELETE("sStores/:id", removeStore(s))
+		// Transactions
+		v1.POST("/transactions", addTransaction(s))
+		v1.GET("/transactions", getTransactions(s))
+		v1.GET("/transactions/:id", getTransaction(s))
+		v1.PUT("/transactions/:id", editTransaction(s))
+		v1.DELETE("/transactions/:id", removeTransaction(s))
 
 	}
 

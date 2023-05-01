@@ -14,19 +14,19 @@ type Service interface {
 	EditUser(model.User) (model.User, error)
 	RemoveUser(model.User) (model.User, error)
 
-	// Merchant
-	AddMerchant(model.Merchant) (model.Merchant, error)
-	GetMerchants() ([]model.Merchant, error)
-	GetMerchant(model.Merchant) (model.Merchant, error)
-	EditMerchant(model.Merchant) (model.Merchant, error)
-	RemoveMerchant(model.Merchant) (model.Merchant, error)
-
 	// Product
 	AddProduct(model.Product) (model.Product, error)
 	GetProducts() ([]model.Product, error)
 	GetProduct(model.Product) (model.Product, error)
 	EditProduct(model.Product) (model.Product, error)
 	RemoveProduct(model.Product) (model.Product, error)
+
+	// Uom
+	AddUom(model.Uom) (model.Uom, error)
+	GetUoms() ([]model.Uom, error)
+	GetUom(model.Uom) (model.Uom, error)
+	EditUom(model.Uom) (model.Uom, error)
+	RemoveUom(model.Uom) (model.Uom, error)
 
 	// Categories
 	AddCategories(model.Categories) (model.Categories, error)
@@ -35,12 +35,12 @@ type Service interface {
 	EditCategories(model.Categories) (model.Categories, error)
 	RemoveCategories(model.Categories) (model.Categories, error)
 
-	// Store
-	AddStore(model.Store) (model.Store, error)
-	GetStores() ([]model.Store, error)
-	GetStore(model.Store) (model.Store, error)
-	EditStore(model.Store) (model.Store, error)
-	RemoveStore(model.Store) (model.Store, error)
+	// Transaction
+	AddTransaction(model.Transaction) (model.Transaction, error)
+	GetTransactions() ([]model.Transaction, error)
+	GetTransaction(model.Transaction) (model.Transaction, error)
+	EditTransaction(model.Transaction) (model.Transaction, error)
+	RemoveTransaction(model.Transaction) (model.Transaction, error)
 }
 
 type service struct {

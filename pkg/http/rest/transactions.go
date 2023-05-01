@@ -10,15 +10,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func addStore(s service.Service) gin.HandlerFunc {
+func addTransaction(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var body model.Store
+		var body model.Transaction
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
 
-		res, err := s.AddStore(body)
+		res, err := s.AddTransaction(body)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -28,12 +28,12 @@ func addStore(s service.Service) gin.HandlerFunc {
 	}
 }
 
-func getStores(s service.Service) gin.HandlerFunc {
+func getTransactions(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var res []model.Store
+		var res []model.Transaction
 		var err error
 
-		if res, err = s.GetStores(); err != nil {
+		if res, err = s.GetTransactions(); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
@@ -42,9 +42,9 @@ func getStores(s service.Service) gin.HandlerFunc {
 	}
 }
 
-func getStore(s service.Service) gin.HandlerFunc {
+func getTransaction(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var res model.Store
+		var res model.Transaction
 
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
@@ -53,7 +53,7 @@ func getStore(s service.Service) gin.HandlerFunc {
 		}
 		res.ID = uint(id)
 
-		res, err = s.GetStore(res)
+		res, err = s.GetTransaction(res)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -63,9 +63,9 @@ func getStore(s service.Service) gin.HandlerFunc {
 	}
 }
 
-func editStore(s service.Service) gin.HandlerFunc {
+func editTransaction(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var body model.Store
+		var body model.Transaction
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -78,7 +78,7 @@ func editStore(s service.Service) gin.HandlerFunc {
 		}
 		body.ID = uint(id)
 
-		res, err := s.EditStore(body)
+		res, err := s.EditTransaction(body)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -88,9 +88,9 @@ func editStore(s service.Service) gin.HandlerFunc {
 	}
 }
 
-func removeStore(s service.Service) gin.HandlerFunc {
+func removeTransaction(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var body model.Store
+		var body model.Transaction
 
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
@@ -99,7 +99,7 @@ func removeStore(s service.Service) gin.HandlerFunc {
 		}
 		body.ID = uint(id)
 
-		res, err := s.RemoveStore(body)
+		res, err := s.RemoveTransaction(body)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return

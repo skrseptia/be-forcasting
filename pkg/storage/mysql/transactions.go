@@ -3,10 +3,12 @@ package mysql
 import (
 	"errors"
 	"food_delivery_api/pkg/model"
+
 	"gorm.io/gorm"
 )
 
-func (s *Storage) CreateStore(obj model.Store) (model.Store, error) {
+func (s *Storage) CreateTransaction(obj model.Transaction) (model.Transaction, error) {
+
 	err := s.db.Create(&obj).Error
 	if err != nil {
 		return obj, err
@@ -15,8 +17,8 @@ func (s *Storage) CreateStore(obj model.Store) (model.Store, error) {
 	return obj, nil
 }
 
-func (s *Storage) ReadStores() ([]model.Store, error) {
-	var list []model.Store
+func (s *Storage) ReadTransactions() ([]model.Transaction, error) {
+	var list []model.Transaction
 
 	err := s.db.Find(&list).Error
 	if err != nil {
@@ -26,7 +28,7 @@ func (s *Storage) ReadStores() ([]model.Store, error) {
 	return list, nil
 }
 
-func (s *Storage) ReadStore(obj model.Store) (model.Store, error) {
+func (s *Storage) ReadTransaction(obj model.Transaction) (model.Transaction, error) {
 	err := s.db.First(&obj, obj.ID).Error
 	if err != nil {
 		return obj, err
@@ -35,7 +37,7 @@ func (s *Storage) ReadStore(obj model.Store) (model.Store, error) {
 	return obj, nil
 }
 
-func (s *Storage) UpdateStore(obj model.Store) (model.Store, error) {
+func (s *Storage) UpdateTransaction(obj model.Transaction) (model.Transaction, error) {
 	err := s.db.Model(&obj).Updates(obj).Error
 	if err != nil {
 		return obj, err
@@ -44,7 +46,7 @@ func (s *Storage) UpdateStore(obj model.Store) (model.Store, error) {
 	return obj, nil
 }
 
-func (s *Storage) DeleteStore(obj model.Store) (model.Store, error) {
+func (s *Storage) DeleteTransaction(obj model.Transaction) (model.Transaction, error) {
 	err := s.db.First(&obj, obj.ID).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return obj, errors.New("data not found")
