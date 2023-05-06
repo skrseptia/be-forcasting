@@ -50,6 +50,7 @@ type RepositoryMySQL interface {
 
 	// Transaction Lines
 	CreateTransactionLine(model.TransactionLine) (model.TransactionLine, error)
+	CreateTransactionLines([]model.TransactionLine) ([]model.TransactionLine, error)
 	ReadTransactionLines() ([]model.TransactionLine, error)
 	ReadTransactionLine(model.TransactionLine) (model.TransactionLine, error)
 	UpdateTransactionLine(model.TransactionLine) (model.TransactionLine, error)

@@ -69,9 +69,7 @@ func getLoggedUser(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var res model.User
 
-		bearer := c.Request.Header["Authorization"]
-		ss := strings.Split(bearer[0], " ")
-		token := ss[1]
+		token := strings.Replace(c.GetHeader("Authorization"), "Bearer ", "", -1)
 
 		id, err := util.ParseJWT(token)
 		if err != nil {

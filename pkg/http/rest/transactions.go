@@ -4,10 +4,11 @@ import (
 	"errors"
 	"food_delivery_api/pkg/model"
 	"food_delivery_api/pkg/service"
+	"food_delivery_api/pkg/util"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
-
-	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 func addTransaction(s service.Service) gin.HandlerFunc {
@@ -18,7 +19,23 @@ func addTransaction(s service.Service) gin.HandlerFunc {
 			return
 		}
 
-		res, err := s.AddTransaction(body)
+		var user model.User
+		token := strings.Replace(c.GetHeader("Authorization"), "Bearer ", "", -1)
+
+		id, err := util.ParseJWT(token)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+		user.ID = uint(id)
+
+		acc, err := s.GetUser(user)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		res, err := s.AddTransaction(body, acc.FullName)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return

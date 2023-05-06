@@ -16,7 +16,7 @@ func (s *Storage) CreateTransaction(obj model.Transaction) (model.Transaction, e
 func (s *Storage) ReadTransactions() ([]model.Transaction, error) {
 	var list []model.Transaction
 
-	err := s.db.Find(&list).Error
+	err := s.db.Preload("TransactionLines").Find(&list).Error
 	if err != nil {
 		return list, err
 	}
@@ -25,7 +25,7 @@ func (s *Storage) ReadTransactions() ([]model.Transaction, error) {
 }
 
 func (s *Storage) ReadTransaction(obj model.Transaction) (model.Transaction, error) {
-	err := s.db.First(&obj, obj.ID).Error
+	err := s.db.Preload("TransactionLines").First(&obj, obj.ID).Error
 	if err != nil {
 		return obj, err
 	}

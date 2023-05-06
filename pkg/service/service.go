@@ -36,7 +36,7 @@ type Service interface {
 	RemoveProduct(model.Product) (model.Product, error)
 
 	// Transaction
-	AddTransaction(model.Transaction) (model.Transaction, error)
+	AddTransaction(model.Transaction, string) (model.Transaction, error)
 	GetTransactions() ([]model.Transaction, error)
 	GetTransaction(model.Transaction) (model.Transaction, error)
 	EditTransaction(model.Transaction) (model.Transaction, error)

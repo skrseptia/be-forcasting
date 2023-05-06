@@ -11,10 +11,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type Header struct {
-	Authorization string `json:"authorization"`
-}
-
 type Response struct {
 	Success bool        `json:"success"`
 	Error   string      `json:"error,omitempty"`
@@ -23,12 +19,7 @@ type Response struct {
 
 func JWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		header := Header{}
-		if err := c.ShouldBindHeader(&header); err != nil {
-			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
-		}
-
-		bearer := strings.Replace(header.Authorization, "Bearer ", "", -1)
+		bearer := strings.Replace(c.GetHeader("Authorization"), "Bearer ", "", -1)
 		token, err := jwt.ParseWithClaims(bearer, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(cfg.Aut.Key), nil
 		}, jwt.WithLeeway(5*time.Second))

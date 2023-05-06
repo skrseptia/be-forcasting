@@ -13,6 +13,15 @@ func (s *Storage) CreateTransactionLine(obj model.TransactionLine) (model.Transa
 	return obj, nil
 }
 
+func (s *Storage) CreateTransactionLines(list []model.TransactionLine) ([]model.TransactionLine, error) {
+	err := s.db.Create(&list).Error
+	if err != nil {
+		return list, err
+	}
+
+	return list, nil
+}
+
 func (s *Storage) ReadTransactionLines() ([]model.TransactionLine, error) {
 	var list []model.TransactionLine
 
