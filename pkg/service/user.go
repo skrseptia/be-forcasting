@@ -4,8 +4,8 @@ import (
 	"food_delivery_api/pkg/model"
 )
 
-func (s *service) AddUser(obj model.User) (model.User, error) {
-	obj, err := s.rmy.CreateUser(obj)
+func (s *service) AddUser(p model.User) (model.User, error) {
+	obj, err := s.rmy.CreateUser(p)
 	if err != nil {
 		return obj, err
 	}
@@ -30,8 +30,8 @@ func (s *service) GetUsers() ([]model.User, error) {
 	return list, nil
 }
 
-func (s *service) GetUser(obj model.User) (model.User, error) {
-	obj, err := s.rmy.ReadUser(obj)
+func (s *service) GetUser(p model.User) (model.User, error) {
+	obj, err := s.rmy.ReadUser(p)
 	if err != nil {
 		return obj, err
 	}
@@ -42,8 +42,8 @@ func (s *service) GetUser(obj model.User) (model.User, error) {
 	return obj, nil
 }
 
-func (s *service) GetUserByEmailPassword(obj model.User) (model.User, error) {
-	obj, err := s.rmy.ReadUserByEmailPassword(obj)
+func (s *service) GetUserByEmailPassword(p model.User) (model.User, error) {
+	obj, err := s.rmy.ReadUserByEmailPassword(p)
 	if err != nil {
 		return obj, err
 	}
@@ -54,8 +54,13 @@ func (s *service) GetUserByEmailPassword(obj model.User) (model.User, error) {
 	return obj, nil
 }
 
-func (s *service) EditUser(obj model.User) (model.User, error) {
-	obj, err := s.rmy.UpdateUser(obj)
+func (s *service) EditUser(p model.User) (model.User, error) {
+	obj, err := s.rmy.ReadUser(p)
+	if err != nil {
+		return obj, err
+	}
+
+	obj, err = s.rmy.UpdateUser(p)
 	if err != nil {
 		return obj, err
 	}
@@ -66,8 +71,13 @@ func (s *service) EditUser(obj model.User) (model.User, error) {
 	return obj, nil
 }
 
-func (s *service) RemoveUser(obj model.User) (model.User, error) {
-	obj, err := s.rmy.DeleteUser(obj)
+func (s *service) RemoveUser(p model.User) (model.User, error) {
+	obj, err := s.rmy.ReadUser(p)
+	if err != nil {
+		return obj, err
+	}
+
+	_, err = s.rmy.DeleteUser(p)
 	if err != nil {
 		return obj, err
 	}

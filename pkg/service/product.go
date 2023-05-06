@@ -4,23 +4,23 @@ import (
 	"food_delivery_api/pkg/model"
 )
 
-func (s *service) AddProduct(body model.ProductRequest) (model.Product, error) {
-	obj := model.Product{
-		Code:        body.Code,
-		Name:        body.Name,
-		Description: body.Description,
-		ImageURL:    body.ImageURL,
-		Qty:         body.Qty,
-		UOMID:       body.UOMID,
-		Price:       body.Price,
+func (s *service) AddProduct(p model.ProductRequest) (model.Product, error) {
+	pr := model.Product{
+		Code:        p.Code,
+		Name:        p.Name,
+		Description: p.Description,
+		ImageURL:    p.ImageURL,
+		Qty:         p.Qty,
+		UOMID:       p.UOMID,
+		Price:       p.Price,
 	}
 
-	obj, err := s.rmy.CreateProduct(obj)
+	obj, err := s.rmy.CreateProduct(pr)
 	if err != nil {
 		return obj, err
 	}
 
-	uom, err := s.rmy.ReadUOM(model.UOM{Model: model.Model{ID: uint(obj.UOMID)}})
+	uom, err := s.rmy.ReadUOM(model.UOM{Model: model.Model{ID: uint(p.UOMID)}})
 	obj.UOM = uom
 
 	return obj, nil
@@ -35,8 +35,8 @@ func (s *service) GetProducts() ([]model.Product, error) {
 	return list, nil
 }
 
-func (s *service) GetProduct(obj model.Product) (model.Product, error) {
-	obj, err := s.rmy.ReadProduct(obj)
+func (s *service) GetProduct(p model.Product) (model.Product, error) {
+	obj, err := s.rmy.ReadProduct(p)
 	if err != nil {
 		return obj, err
 	}
@@ -44,19 +44,24 @@ func (s *service) GetProduct(obj model.Product) (model.Product, error) {
 	return obj, nil
 }
 
-func (s *service) EditProduct(body model.ProductRequest) (model.Product, error) {
-	obj := model.Product{
-		Model:       model.Model{ID: body.ID},
-		Code:        body.Code,
-		Name:        body.Name,
-		Description: body.Description,
-		ImageURL:    body.ImageURL,
-		Qty:         body.Qty,
-		UOMID:       body.UOMID,
-		Price:       body.Price,
+func (s *service) EditProduct(p model.ProductRequest) (model.Product, error) {
+	obj, err := s.rmy.ReadProduct(model.Product{Model: model.Model{ID: p.ID}})
+	if err != nil {
+		return obj, err
 	}
 
-	obj, err := s.rmy.UpdateProduct(obj)
+	pr := model.Product{
+		Model:       model.Model{ID: p.ID},
+		Code:        p.Code,
+		Name:        p.Name,
+		Description: p.Description,
+		ImageURL:    p.ImageURL,
+		Qty:         p.Qty,
+		UOMID:       p.UOMID,
+		Price:       p.Price,
+	}
+
+	obj, err = s.rmy.UpdateProduct(pr)
 	if err != nil {
 		return obj, err
 	}
@@ -67,14 +72,16 @@ func (s *service) EditProduct(body model.ProductRequest) (model.Product, error) 
 	return obj, nil
 }
 
-func (s *service) RemoveProduct(obj model.Product) (model.Product, error) {
-	obj, err := s.rmy.DeleteProduct(obj)
+func (s *service) RemoveProduct(p model.Product) (model.Product, error) {
+	obj, err := s.rmy.ReadProduct(model.Product{Model: model.Model{ID: p.ID}})
 	if err != nil {
 		return obj, err
 	}
 
-	uom, err := s.rmy.ReadUOM(model.UOM{Model: model.Model{ID: uint(obj.UOMID)}})
-	obj.UOM = uom
+	_, err = s.rmy.DeleteProduct(p)
+	if err != nil {
+		return obj, err
+	}
 
 	return obj, nil
 }

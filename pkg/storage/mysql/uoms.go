@@ -1,9 +1,7 @@
 package mysql
 
 import (
-	"errors"
 	"food_delivery_api/pkg/model"
-	"gorm.io/gorm"
 )
 
 func (s *Storage) CreateUOM(obj model.UOM) (model.UOM, error) {
@@ -36,12 +34,7 @@ func (s *Storage) ReadUOM(obj model.UOM) (model.UOM, error) {
 }
 
 func (s *Storage) UpdateUOM(obj model.UOM) (model.UOM, error) {
-	err := s.db.First(&obj, obj.ID).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return obj, errors.New("data not found")
-	}
-
-	err = s.db.Model(&obj).Updates(obj).Error
+	err := s.db.Model(&obj).Updates(obj).Error
 	if err != nil {
 		return obj, err
 	}
@@ -50,12 +43,7 @@ func (s *Storage) UpdateUOM(obj model.UOM) (model.UOM, error) {
 }
 
 func (s *Storage) DeleteUOM(obj model.UOM) (model.UOM, error) {
-	err := s.db.First(&obj, obj.ID).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return obj, errors.New("data not found")
-	}
-
-	err = s.db.Delete(&obj, obj.ID).Error
+	err := s.db.Delete(&obj, obj.ID).Error
 	if err != nil {
 		return obj, err
 	}

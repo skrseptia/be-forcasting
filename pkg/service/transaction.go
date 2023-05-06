@@ -4,8 +4,8 @@ import (
 	"food_delivery_api/pkg/model"
 )
 
-func (s *service) AddTransaction(obj model.Transaction) (model.Transaction, error) {
-	obj, err := s.rmy.CreateTransaction(obj)
+func (s *service) AddTransaction(p model.Transaction) (model.Transaction, error) {
+	obj, err := s.rmy.CreateTransaction(p)
 	if err != nil {
 		return obj, err
 	}
@@ -22,8 +22,8 @@ func (s *service) GetTransactions() ([]model.Transaction, error) {
 	return list, nil
 }
 
-func (s *service) GetTransaction(obj model.Transaction) (model.Transaction, error) {
-	obj, err := s.rmy.ReadTransaction(obj)
+func (s *service) GetTransaction(p model.Transaction) (model.Transaction, error) {
+	obj, err := s.rmy.ReadTransaction(p)
 	if err != nil {
 		return obj, err
 	}
@@ -31,8 +31,13 @@ func (s *service) GetTransaction(obj model.Transaction) (model.Transaction, erro
 	return obj, nil
 }
 
-func (s *service) EditTransaction(obj model.Transaction) (model.Transaction, error) {
-	obj, err := s.rmy.UpdateTransaction(obj)
+func (s *service) EditTransaction(p model.Transaction) (model.Transaction, error) {
+	obj, err := s.rmy.ReadTransaction(p)
+	if err != nil {
+		return obj, err
+	}
+
+	obj, err = s.rmy.UpdateTransaction(p)
 	if err != nil {
 		return obj, err
 	}
@@ -40,8 +45,13 @@ func (s *service) EditTransaction(obj model.Transaction) (model.Transaction, err
 	return obj, nil
 }
 
-func (s *service) RemoveTransaction(obj model.Transaction) (model.Transaction, error) {
-	obj, err := s.rmy.DeleteTransaction(obj)
+func (s *service) RemoveTransaction(p model.Transaction) (model.Transaction, error) {
+	obj, err := s.rmy.ReadTransaction(p)
+	if err != nil {
+		return obj, err
+	}
+
+	_, err = s.rmy.DeleteTransaction(p)
 	if err != nil {
 		return obj, err
 	}

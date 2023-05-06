@@ -5,8 +5,9 @@ import (
 	"food_delivery_api/pkg/model"
 	"food_delivery_api/pkg/service"
 	"food_delivery_api/pkg/util"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Auth struct {

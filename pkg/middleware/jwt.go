@@ -3,11 +3,12 @@ package middleware
 import (
 	"errors"
 	"food_delivery_api/cfg"
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type Header struct {
