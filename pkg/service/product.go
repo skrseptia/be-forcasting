@@ -73,5 +73,8 @@ func (s *service) RemoveProduct(obj model.Product) (model.Product, error) {
 		return obj, err
 	}
 
+	uom, err := s.rmy.ReadUOM(model.UOM{Model: model.Model{ID: uint(obj.UOMID)}})
+	obj.UOM = uom
+
 	return obj, nil
 }

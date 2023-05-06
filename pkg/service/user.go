@@ -10,6 +10,9 @@ func (s *service) AddUser(obj model.User) (model.User, error) {
 		return obj, err
 	}
 
+	// hide password
+	obj.Password = ""
+
 	return obj, nil
 }
 
@@ -17,6 +20,11 @@ func (s *service) GetUsers() ([]model.User, error) {
 	list, err := s.rmy.ReadUsers()
 	if err != nil {
 		return list, err
+	}
+
+	// hide password
+	for i := range list {
+		list[i].Password = ""
 	}
 
 	return list, nil
@@ -28,6 +36,9 @@ func (s *service) GetUser(obj model.User) (model.User, error) {
 		return obj, err
 	}
 
+	// hide password
+	obj.Password = ""
+
 	return obj, nil
 }
 
@@ -36,6 +47,9 @@ func (s *service) GetUserByEmailPassword(obj model.User) (model.User, error) {
 	if err != nil {
 		return obj, err
 	}
+
+	// hide password
+	obj.Password = ""
 
 	return obj, nil
 }
@@ -46,6 +60,9 @@ func (s *service) EditUser(obj model.User) (model.User, error) {
 		return obj, err
 	}
 
+	// hide password
+	obj.Password = ""
+
 	return obj, nil
 }
 
@@ -54,6 +71,9 @@ func (s *service) RemoveUser(obj model.User) (model.User, error) {
 	if err != nil {
 		return obj, err
 	}
+
+	// hide password
+	obj.Password = ""
 
 	return obj, nil
 }

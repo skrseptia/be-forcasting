@@ -4,6 +4,7 @@ import (
 	"errors"
 	"food_delivery_api/pkg/model"
 	"food_delivery_api/pkg/service"
+	"food_delivery_api/pkg/util"
 	"net/http"
 	"strconv"
 	"strings"
@@ -72,20 +73,17 @@ func getLoggedUser(s service.Service) gin.HandlerFunc {
 		ss := strings.Split(bearer[0], " ")
 		token := ss[1]
 
-		// res, err = s.GetUser(res)
-		// if err != nil {
-		// 	c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
-		// 	return
-		// }
+		id, err := util.ParseJWT(token)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+		res.ID = uint(id)
 
-		res = model.User{
-			Model:    model.Model{ID: 1},
-			FullName: "Super Admin",
-			Email:    "admin@mail.com",
-			ImageURL: token,
-			Phone:    "+6281234567890",
-			Address:  "Karawang",
-			Role:     "Super Admin",
+		res, err = s.GetUser(res)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
 		}
 
 		c.JSON(http.StatusOK, Response{Success: true, Data: res})

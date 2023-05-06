@@ -38,7 +38,7 @@ func login(s service.Service) gin.HandlerFunc {
 			return
 		}
 
-		token, err := util.GenerateJWT(res.Email)
+		token, err := util.GenerateJWT(int(res.ID), res.Email)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
