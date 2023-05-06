@@ -9,12 +9,17 @@ import (
 	"net"
 	"os"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	goEnv := strings.ToLower(os.Getenv("GO_ENV"))
 	if goEnv == "" {
 		goEnv = "local"
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
 	}
 
 	// Load the config
@@ -47,7 +52,7 @@ func LoadConfig(goEnv string) {
 
 func run(goEnv string) {
 	// MySQL setup
-	rmy, err := mysql.NewStorage(cfg.My)
+	rmy, err := mysql.NewStorage(cfg.My, goEnv)
 	if err != nil {
 		log.Fatal("Error: Database failed to connect (", cfg.My.DSN, ") - ", err)
 	}

@@ -4,8 +4,8 @@ import (
 	"food_delivery_api/pkg/model"
 )
 
-func (s *service) AddCategory(obj model.Category) (model.Category, error) {
-	obj, err := s.rmy.CreateCategory(obj)
+func (s *service) AddCategory(p model.Category) (model.Category, error) {
+	obj, err := s.rmy.CreateCategory(p)
 	if err != nil {
 		return obj, err
 	}
@@ -22,8 +22,8 @@ func (s *service) GetCategories() ([]model.Category, error) {
 	return list, nil
 }
 
-func (s *service) GetCategory(obj model.Category) (model.Category, error) {
-	obj, err := s.rmy.ReadCategory(obj)
+func (s *service) GetCategory(p model.Category) (model.Category, error) {
+	obj, err := s.rmy.ReadCategory(p)
 	if err != nil {
 		return obj, err
 	}
@@ -31,8 +31,13 @@ func (s *service) GetCategory(obj model.Category) (model.Category, error) {
 	return obj, nil
 }
 
-func (s *service) EditCategory(obj model.Category) (model.Category, error) {
-	obj, err := s.rmy.UpdateCategory(obj)
+func (s *service) EditCategory(p model.Category) (model.Category, error) {
+	obj, err := s.rmy.ReadCategory(p)
+	if err != nil {
+		return obj, err
+	}
+
+	obj, err = s.rmy.UpdateCategory(p)
 	if err != nil {
 		return obj, err
 	}
@@ -40,8 +45,13 @@ func (s *service) EditCategory(obj model.Category) (model.Category, error) {
 	return obj, nil
 }
 
-func (s *service) RemoveCategory(obj model.Category) (model.Category, error) {
-	obj, err := s.rmy.DeleteCategory(obj)
+func (s *service) RemoveCategory(p model.Category) (model.Category, error) {
+	obj, err := s.rmy.ReadCategory(p)
+	if err != nil {
+		return obj, err
+	}
+
+	_, err = s.rmy.DeleteCategory(p)
 	if err != nil {
 		return obj, err
 	}

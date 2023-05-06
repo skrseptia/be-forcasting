@@ -12,6 +12,7 @@ import (
 
 func Handler(s service.Service) *gin.Engine {
 	r := gin.Default()
+	_ = r.SetTrustedProxies(nil)
 	setupCORS(r)
 
 	// Public API

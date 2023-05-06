@@ -8,6 +8,7 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type RepositoryMySQL interface {
@@ -59,12 +60,21 @@ type Storage struct {
 	db *gorm.DB
 }
 
-func NewStorage(c cfg.MySQL) (*Storage, error) {
+func NewStorage(c cfg.MySQL, goEnv string) (*Storage, error) {
 	var err error
 
 	s := new(Storage)
 
-	s.db, err = gorm.Open(mysql.Open(c.DSN), &gorm.Config{})
+	var ll logger.LogLevel
+	if goEnv == "local" {
+		ll = logger.Info
+	} else {
+		ll = logger.Silent
+	}
+
+	s.db, err = gorm.Open(mysql.Open(c.DSN), &gorm.Config{
+		Logger: logger.Default.LogMode(ll),
+	})
 	if err != nil {
 		return s, err
 	}
