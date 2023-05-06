@@ -6,6 +6,7 @@ import (
 	"food_delivery_api/pkg/service"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -57,6 +58,34 @@ func getUser(s service.Service) gin.HandlerFunc {
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
+		}
+
+		c.JSON(http.StatusOK, Response{Success: true, Data: res})
+	}
+}
+
+func getLoggedUser(s service.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var res model.User
+
+		bearer := c.Request.Header["Authorization"]
+		ss := strings.Split(bearer[0], " ")
+		token := ss[1]
+
+		// res, err = s.GetUser(res)
+		// if err != nil {
+		// 	c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+		// 	return
+		// }
+
+		res = model.User{
+			Model:    model.Model{ID: 1},
+			FullName: "Super Admin",
+			Email:    "admin@mail.com",
+			ImageURL: token,
+			Phone:    "+6281234567890",
+			Address:  "Karawang",
+			Role:     "Super Admin",
 		}
 
 		c.JSON(http.StatusOK, Response{Success: true, Data: res})

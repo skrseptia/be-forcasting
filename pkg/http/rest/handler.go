@@ -26,6 +26,7 @@ func Handler(s service.Service) *gin.Engine {
 		v1.POST("/users", addUser(s))
 		v1.GET("/users", getUsers(s))
 		v1.GET("/users/:id", getUser(s))
+		v1.GET("/users/me", getLoggedUser(s))
 		v1.PUT("/users/:id", editUser(s))
 		v1.DELETE("/users/:id", removeUser(s))
 
