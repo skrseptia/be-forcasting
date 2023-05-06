@@ -4,8 +4,8 @@ import (
 	"food_delivery_api/pkg/model"
 )
 
-func (s *service) AddUom(obj model.Uom) (model.Uom, error) {
-	obj, err := s.rmy.CreateUom(obj)
+func (s *service) AddUOM(obj model.UOM) (model.UOM, error) {
+	obj, err := s.rmy.CreateUOM(obj)
 	if err != nil {
 		return obj, err
 	}
@@ -13,8 +13,8 @@ func (s *service) AddUom(obj model.Uom) (model.Uom, error) {
 	return obj, nil
 }
 
-func (s *service) GetUoms() ([]model.Uom, error) {
-	list, err := s.rmy.ReadUoms()
+func (s *service) GetUOMs() ([]model.UOM, error) {
+	list, err := s.rmy.ReadUOMs()
 	if err != nil {
 		return list, err
 	}
@@ -22,8 +22,8 @@ func (s *service) GetUoms() ([]model.Uom, error) {
 	return list, nil
 }
 
-func (s *service) GetUom(obj model.Uom) (model.Uom, error) {
-	obj, err := s.rmy.ReadUom(obj)
+func (s *service) GetUOM(obj model.UOM) (model.UOM, error) {
+	obj, err := s.rmy.ReadUOM(obj)
 	if err != nil {
 		return obj, err
 	}
@@ -31,8 +31,8 @@ func (s *service) GetUom(obj model.Uom) (model.Uom, error) {
 	return obj, nil
 }
 
-func (s *service) EditUom(obj model.Uom) (model.Uom, error) {
-	obj, err := s.rmy.UpdateUom(obj)
+func (s *service) EditUOM(obj model.UOM) (model.UOM, error) {
+	obj, err := s.rmy.UpdateUOM(obj)
 	if err != nil {
 		return obj, err
 	}
@@ -40,8 +40,8 @@ func (s *service) EditUom(obj model.Uom) (model.Uom, error) {
 	return obj, nil
 }
 
-func (s *service) RemoveUom(obj model.Uom) (model.Uom, error) {
-	obj, err := s.rmy.DeleteUom(obj)
+func (s *service) RemoveUOM(obj model.UOM) (model.UOM, error) {
+	obj, err := s.rmy.DeleteUOM(obj)
 	if err != nil {
 		return obj, err
 	}

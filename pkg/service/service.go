@@ -14,26 +14,26 @@ type Service interface {
 	EditUser(model.User) (model.User, error)
 	RemoveUser(model.User) (model.User, error)
 
+	// Category
+	AddCategory(model.Category) (model.Category, error)
+	GetCategories() ([]model.Category, error)
+	GetCategory(model.Category) (model.Category, error)
+	EditCategory(model.Category) (model.Category, error)
+	RemoveCategory(model.Category) (model.Category, error)
+
+	// UOM
+	AddUOM(model.UOM) (model.UOM, error)
+	GetUOMs() ([]model.UOM, error)
+	GetUOM(model.UOM) (model.UOM, error)
+	EditUOM(model.UOM) (model.UOM, error)
+	RemoveUOM(model.UOM) (model.UOM, error)
+
 	// Product
-	AddProduct(model.Product) (model.Product, error)
+	AddProduct(product model.ProductRequest) (model.Product, error)
 	GetProducts() ([]model.Product, error)
 	GetProduct(model.Product) (model.Product, error)
-	EditProduct(model.Product) (model.Product, error)
+	EditProduct(model.ProductRequest) (model.Product, error)
 	RemoveProduct(model.Product) (model.Product, error)
-
-	// Uom
-	AddUom(model.Uom) (model.Uom, error)
-	GetUoms() ([]model.Uom, error)
-	GetUom(model.Uom) (model.Uom, error)
-	EditUom(model.Uom) (model.Uom, error)
-	RemoveUom(model.Uom) (model.Uom, error)
-
-	// Categories
-	AddCategories(model.Categories) (model.Categories, error)
-	GetCategoriess() ([]model.Categories, error)
-	GetCategories(model.Categories) (model.Categories, error)
-	EditCategories(model.Categories) (model.Categories, error)
-	RemoveCategories(model.Categories) (model.Categories, error)
 
 	// Transaction
 	AddTransaction(model.Transaction) (model.Transaction, error)

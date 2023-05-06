@@ -46,7 +46,12 @@ func (s *Storage) ReadUserByEmailPassword(obj model.User) (model.User, error) {
 }
 
 func (s *Storage) UpdateUser(obj model.User) (model.User, error) {
-	err := s.db.Model(&obj).Updates(obj).Error
+	err := s.db.First(&obj, obj.ID).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return obj, errors.New("data not found")
+	}
+
+	err = s.db.Model(&obj).Updates(obj).Error
 	if err != nil {
 		return obj, err
 	}

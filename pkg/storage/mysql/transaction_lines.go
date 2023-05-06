@@ -3,10 +3,11 @@ package mysql
 import (
 	"errors"
 	"food_delivery_api/pkg/model"
+
 	"gorm.io/gorm"
 )
 
-func (s *Storage) CreateProduct(obj model.Product) (model.Product, error) {
+func (s *Storage) CreateTransactionLine(obj model.TransactionLine) (model.TransactionLine, error) {
 	err := s.db.Create(&obj).Error
 	if err != nil {
 		return obj, err
@@ -15,10 +16,10 @@ func (s *Storage) CreateProduct(obj model.Product) (model.Product, error) {
 	return obj, nil
 }
 
-func (s *Storage) ReadProducts() ([]model.Product, error) {
-	var list []model.Product
+func (s *Storage) ReadTransactionLines() ([]model.TransactionLine, error) {
+	var list []model.TransactionLine
 
-	err := s.db.Preload("UOM").Find(&list).Error
+	err := s.db.Find(&list).Error
 	if err != nil {
 		return list, err
 	}
@@ -26,8 +27,8 @@ func (s *Storage) ReadProducts() ([]model.Product, error) {
 	return list, nil
 }
 
-func (s *Storage) ReadProduct(obj model.Product) (model.Product, error) {
-	err := s.db.Preload("UOM").First(&obj, obj.ID).Error
+func (s *Storage) ReadTransactionLine(obj model.TransactionLine) (model.TransactionLine, error) {
+	err := s.db.First(&obj, obj.ID).Error
 	if err != nil {
 		return obj, err
 	}
@@ -35,7 +36,7 @@ func (s *Storage) ReadProduct(obj model.Product) (model.Product, error) {
 	return obj, nil
 }
 
-func (s *Storage) UpdateProduct(obj model.Product) (model.Product, error) {
+func (s *Storage) UpdateTransactionLine(obj model.TransactionLine) (model.TransactionLine, error) {
 	err := s.db.First(&obj, obj.ID).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return obj, errors.New("data not found")
@@ -49,7 +50,7 @@ func (s *Storage) UpdateProduct(obj model.Product) (model.Product, error) {
 	return obj, nil
 }
 
-func (s *Storage) DeleteProduct(obj model.Product) (model.Product, error) {
+func (s *Storage) DeleteTransactionLine(obj model.TransactionLine) (model.TransactionLine, error) {
 	err := s.db.First(&obj, obj.ID).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return obj, errors.New("data not found")

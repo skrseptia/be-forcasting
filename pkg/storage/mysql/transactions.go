@@ -8,7 +8,6 @@ import (
 )
 
 func (s *Storage) CreateTransaction(obj model.Transaction) (model.Transaction, error) {
-
 	err := s.db.Create(&obj).Error
 	if err != nil {
 		return obj, err
@@ -38,7 +37,12 @@ func (s *Storage) ReadTransaction(obj model.Transaction) (model.Transaction, err
 }
 
 func (s *Storage) UpdateTransaction(obj model.Transaction) (model.Transaction, error) {
-	err := s.db.Model(&obj).Updates(obj).Error
+	err := s.db.First(&obj, obj.ID).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return obj, errors.New("data not found")
+	}
+
+	err = s.db.Model(&obj).Updates(obj).Error
 	if err != nil {
 		return obj, err
 	}

@@ -12,7 +12,7 @@ import (
 
 func addProduct(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var body model.Product
+		var body model.ProductRequest
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -65,7 +65,7 @@ func getProduct(s service.Service) gin.HandlerFunc {
 
 func editProduct(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var body model.Product
+		var body model.ProductRequest
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return

@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"food_delivery_api/pkg/middleware"
 	"food_delivery_api/pkg/service"
 	"net/http"
 	"time"
@@ -19,7 +20,7 @@ func Handler(s service.Service) *gin.Engine {
 
 	// Protected API
 	v1 := r.Group("/api/v1")
-	// v1.Use(middleware.JWT())
+	v1.Use(middleware.JWT())
 	{
 		// Users
 		v1.POST("/users", addUser(s))
@@ -28,6 +29,20 @@ func Handler(s service.Service) *gin.Engine {
 		v1.PUT("/users/:id", editUser(s))
 		v1.DELETE("/users/:id", removeUser(s))
 
+		// Categories
+		v1.POST("/categories", addCategory(s))
+		v1.GET("/categories", getCategories(s))
+		v1.GET("/categories/:id", getCategory(s))
+		v1.PUT("/categories/:id", editCategory(s))
+		v1.DELETE("/categories/:id", removeCategory(s))
+
+		// UOMs
+		v1.POST("/uoms", addUOM(s))
+		v1.GET("/uoms", getUOMs(s))
+		v1.GET("/uoms/:id", getUOM(s))
+		v1.PUT("/uoms/:id", editUOM(s))
+		v1.DELETE("/uoms/:id", removeUOM(s))
+
 		// Products
 		v1.POST("/products", addProduct(s))
 		v1.GET("/products", getProducts(s))
@@ -35,27 +50,12 @@ func Handler(s service.Service) *gin.Engine {
 		v1.PUT("/products/:id", editProduct(s))
 		v1.DELETE("/products/:id", removeProduct(s))
 
-		// UOM
-		v1.POST("/uoms", addUom(s))
-		v1.GET("/uoms", getUoms(s))
-		v1.GET("/uoms/:id", getUom(s))
-		v1.PUT("/uoms/:id", editUom(s))
-		v1.DELETE("/uoms/:id", removeUom(s))
-
-		// Categories
-		v1.POST("/categories", addCategories(s))
-		v1.GET("/categories", getCategoriess(s))
-		v1.GET("/categories/:id", getCategories(s))
-		v1.PUT("/categories/:id", editCategories(s))
-		v1.DELETE("/categories/:id", removeCategories(s))
-
 		// Transactions
 		v1.POST("/transactions", addTransaction(s))
 		v1.GET("/transactions", getTransactions(s))
 		v1.GET("/transactions/:id", getTransaction(s))
 		v1.PUT("/transactions/:id", editTransaction(s))
 		v1.DELETE("/transactions/:id", removeTransaction(s))
-
 	}
 
 	return r

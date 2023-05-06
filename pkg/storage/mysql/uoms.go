@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (s *Storage) CreateUom(obj model.Uom) (model.Uom, error) {
+func (s *Storage) CreateUOM(obj model.UOM) (model.UOM, error) {
 	err := s.db.Create(&obj).Error
 	if err != nil {
 		return obj, err
@@ -15,8 +15,8 @@ func (s *Storage) CreateUom(obj model.Uom) (model.Uom, error) {
 	return obj, nil
 }
 
-func (s *Storage) ReadUoms() ([]model.Uom, error) {
-	var list []model.Uom
+func (s *Storage) ReadUOMs() ([]model.UOM, error) {
+	var list []model.UOM
 
 	err := s.db.Find(&list).Error
 	if err != nil {
@@ -26,7 +26,7 @@ func (s *Storage) ReadUoms() ([]model.Uom, error) {
 	return list, nil
 }
 
-func (s *Storage) ReadUom(obj model.Uom) (model.Uom, error) {
+func (s *Storage) ReadUOM(obj model.UOM) (model.UOM, error) {
 	err := s.db.First(&obj, obj.ID).Error
 	if err != nil {
 		return obj, err
@@ -35,8 +35,13 @@ func (s *Storage) ReadUom(obj model.Uom) (model.Uom, error) {
 	return obj, nil
 }
 
-func (s *Storage) UpdateUom(obj model.Uom) (model.Uom, error) {
-	err := s.db.Model(&obj).Updates(obj).Error
+func (s *Storage) UpdateUOM(obj model.UOM) (model.UOM, error) {
+	err := s.db.First(&obj, obj.ID).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return obj, errors.New("data not found")
+	}
+
+	err = s.db.Model(&obj).Updates(obj).Error
 	if err != nil {
 		return obj, err
 	}
@@ -44,7 +49,7 @@ func (s *Storage) UpdateUom(obj model.Uom) (model.Uom, error) {
 	return obj, nil
 }
 
-func (s *Storage) DeleteUom(obj model.Uom) (model.Uom, error) {
+func (s *Storage) DeleteUOM(obj model.UOM) (model.UOM, error) {
 	err := s.db.First(&obj, obj.ID).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return obj, errors.New("data not found")

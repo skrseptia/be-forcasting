@@ -10,15 +10,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func addUom(s service.Service) gin.HandlerFunc {
+func addUOM(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var body model.Uom
+		var body model.UOM
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
 
-		res, err := s.AddUom(body)
+		res, err := s.AddUOM(body)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -28,12 +28,12 @@ func addUom(s service.Service) gin.HandlerFunc {
 	}
 }
 
-func getUoms(s service.Service) gin.HandlerFunc {
+func getUOMs(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var res []model.Uom
+		var res []model.UOM
 		var err error
 
-		if res, err = s.GetUoms(); err != nil {
+		if res, err = s.GetUOMs(); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
@@ -42,9 +42,9 @@ func getUoms(s service.Service) gin.HandlerFunc {
 	}
 }
 
-func getUom(s service.Service) gin.HandlerFunc {
+func getUOM(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var res model.Uom
+		var res model.UOM
 
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
@@ -53,7 +53,7 @@ func getUom(s service.Service) gin.HandlerFunc {
 		}
 		res.ID = uint(id)
 
-		res, err = s.GetUom(res)
+		res, err = s.GetUOM(res)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -63,9 +63,9 @@ func getUom(s service.Service) gin.HandlerFunc {
 	}
 }
 
-func editUom(s service.Service) gin.HandlerFunc {
+func editUOM(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var body model.Uom
+		var body model.UOM
 		if err := c.ShouldBindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -78,7 +78,7 @@ func editUom(s service.Service) gin.HandlerFunc {
 		}
 		body.ID = uint(id)
 
-		res, err := s.EditUom(body)
+		res, err := s.EditUOM(body)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
@@ -88,9 +88,9 @@ func editUom(s service.Service) gin.HandlerFunc {
 	}
 }
 
-func removeUom(s service.Service) gin.HandlerFunc {
+func removeUOM(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var body model.Uom
+		var body model.UOM
 
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
@@ -99,7 +99,7 @@ func removeUom(s service.Service) gin.HandlerFunc {
 		}
 		body.ID = uint(id)
 
-		res, err := s.RemoveUom(body)
+		res, err := s.RemoveUOM(body)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
