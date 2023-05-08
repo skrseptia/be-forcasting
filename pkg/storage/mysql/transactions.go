@@ -13,6 +13,15 @@ func (s *Storage) CreateTransaction(obj model.Transaction) (model.Transaction, e
 	return obj, nil
 }
 
+func (s *Storage) CreateTransactions(list []model.Transaction) ([]model.Transaction, error) {
+	err := s.db.Create(&list).Error
+	if err != nil {
+		return list, err
+	}
+
+	return list, nil
+}
+
 func (s *Storage) ReadTransactions() ([]model.Transaction, error) {
 	var list []model.Transaction
 
