@@ -43,7 +43,7 @@ func (s *Storage) ReadUserByEmailPassword(obj model.User) (model.User, error) {
 }
 
 func (s *Storage) UpdateUser(obj model.User) (model.User, error) {
-	err := s.db.Model(&obj).Updates(obj).Error
+	err := s.db.Model(&obj).Select("*").Updates(obj).Error
 	if err != nil {
 		return obj, err
 	}

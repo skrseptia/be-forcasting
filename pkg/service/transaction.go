@@ -12,8 +12,6 @@ func (s *service) AddTransaction(p model.Transaction, user string) (model.Transa
 	var trx model.Transaction
 	var err error
 
-	rollback := false
-
 	// create transaction header
 	trx.TrxID = fmt.Sprintf("TRX-%s", strconv.FormatInt(time.Now().Unix(), 10))
 	trx.CreatedBy = user
@@ -27,20 +25,23 @@ func (s *service) AddTransaction(p model.Transaction, user string) (model.Transa
 	// create transaction lines
 	var lines []model.TransactionLine
 	var total float64
+	var products []model.Product
 
 	for _, v := range p.TransactionLines {
 		product, err := s.GetProduct(model.Product{Model: model.Model{ID: v.ProductID}})
 		if err != nil {
-			rollback = true
 			return trx, err
 		}
 
-		if v.Qty > product.Qty {
-			rollback = true
-			return trx, errors.New(fmt.Sprintf("%s only %v left", product.Name, product.Qty))
-		} else if product.Qty == 0 {
-			rollback = true
+		// store product to the list for reducing the stock later
+		products = append(products, product)
+
+		if product.Qty == 0 {
+			trx, _ = s.RemoveTransaction(trx)
 			return trx, errors.New(fmt.Sprintf("%s is empty", product.Name))
+		} else if v.Qty > product.Qty {
+			trx, _ = s.RemoveTransaction(trx)
+			return trx, errors.New(fmt.Sprintf("%s only %v left", product.Name, product.Qty))
 		}
 
 		subTotal := v.Qty * product.Price
@@ -58,27 +59,12 @@ func (s *service) AddTransaction(p model.Transaction, user string) (model.Transa
 		})
 
 		total += subTotal
-
-		// reduce stock
-		product.Qty -= v.Qty
-		product, err = s.rmy.UpdateProduct(product)
-		if err != nil {
-			return trx, err
-		}
 	}
 
 	// bulk insert transaction lines
 	lines, err = s.rmy.CreateTransactionLines(lines)
 	if err != nil {
-		rollback = true
 		return trx, err
-	}
-
-	if rollback {
-		trx, err = s.RemoveTransaction(trx)
-		if err != nil {
-			return trx, err
-		}
 	}
 
 	// update total amount in transaction header
@@ -88,6 +74,15 @@ func (s *service) AddTransaction(p model.Transaction, user string) (model.Transa
 		return trx, err
 	}
 	trx.TransactionLines = lines
+
+	// reduce stock
+	for i, v := range products {
+		v.Qty -= lines[i].Qty
+		_, err = s.rmy.UpdateProduct(v)
+		if err != nil {
+			return trx, err
+		}
+	}
 
 	return trx, nil
 }
