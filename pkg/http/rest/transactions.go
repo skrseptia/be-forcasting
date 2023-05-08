@@ -50,12 +50,12 @@ func getTransactions(s service.Service) gin.HandlerFunc {
 		var res []model.Transaction
 		var err error
 
-		if res, err = s.GetTransactions(); err != nil {
+		if res, err = s.GetTransactions(c); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, Response{Success: true, Data: res})
+		successResponse(c, res)
 	}
 }
 

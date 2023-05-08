@@ -2,6 +2,8 @@ package mysql
 
 import (
 	"food_delivery_api/pkg/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (s *Storage) CreateTransaction(obj model.Transaction) (model.Transaction, error) {
@@ -22,10 +24,10 @@ func (s *Storage) CreateTransactions(list []model.Transaction) ([]model.Transact
 	return list, nil
 }
 
-func (s *Storage) ReadTransactions() ([]model.Transaction, error) {
+func (s *Storage) ReadTransactions(c *gin.Context) ([]model.Transaction, error) {
 	var list []model.Transaction
 
-	err := s.db.Preload("TransactionLines").Find(&list).Error
+	err := s.db.Preload("TransactionLines").Scopes(Paginate(c)).Find(&list).Error
 	if err != nil {
 		return list, err
 	}

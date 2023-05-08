@@ -3,6 +3,8 @@ package service
 import (
 	"food_delivery_api/pkg/model"
 	"food_delivery_api/pkg/storage/mysql"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Service interface {
@@ -37,7 +39,7 @@ type Service interface {
 
 	// Transaction
 	AddTransaction(model.Transaction, string) (model.Transaction, error)
-	GetTransactions() ([]model.Transaction, error)
+	GetTransactions(*gin.Context) ([]model.Transaction, error)
 	GetTransaction(model.Transaction) (model.Transaction, error)
 	EditTransaction(model.Transaction) (model.Transaction, error)
 	RemoveTransaction(model.Transaction) (model.Transaction, error)

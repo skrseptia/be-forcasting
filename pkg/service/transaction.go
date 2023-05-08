@@ -6,6 +6,8 @@ import (
 	"food_delivery_api/pkg/model"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (s *service) AddTransaction(p model.Transaction, user string) (model.Transaction, error) {
@@ -87,8 +89,8 @@ func (s *service) AddTransaction(p model.Transaction, user string) (model.Transa
 	return trx, nil
 }
 
-func (s *service) GetTransactions() ([]model.Transaction, error) {
-	list, err := s.rmy.ReadTransactions()
+func (s *service) GetTransactions(c *gin.Context) ([]model.Transaction, error) {
+	list, err := s.rmy.ReadTransactions(c)
 	if err != nil {
 		return list, err
 	}

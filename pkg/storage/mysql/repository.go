@@ -5,6 +5,7 @@ import (
 	"food_delivery_api/pkg/model"
 	"log"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -43,7 +44,7 @@ type RepositoryMySQL interface {
 	// Transactions
 	CreateTransaction(model.Transaction) (model.Transaction, error)
 	CreateTransactions([]model.Transaction) ([]model.Transaction, error)
-	ReadTransactions() ([]model.Transaction, error)
+	ReadTransactions(*gin.Context) ([]model.Transaction, error)
 	ReadTransaction(model.Transaction) (model.Transaction, error)
 	UpdateTransaction(model.Transaction) (model.Transaction, error)
 	DeleteTransaction(model.Transaction) (model.Transaction, error)
