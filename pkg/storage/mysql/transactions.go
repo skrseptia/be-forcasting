@@ -24,15 +24,17 @@ func (s *Storage) CreateTransactions(list []model.Transaction) ([]model.Transact
 	return list, nil
 }
 
-func (s *Storage) ReadTransactions(c *gin.Context) ([]model.Transaction, error) {
+func (s *Storage) ReadTransactions(c *gin.Context) ([]model.Transaction, int64, error) {
 	var list []model.Transaction
+	var ttl int64
 
+	s.db.Find(&list).Count(&ttl)
 	err := s.db.Preload("TransactionLines").Scopes(Paginate(c)).Find(&list).Error
 	if err != nil {
-		return list, err
+		return list, ttl, err
 	}
 
-	return list, nil
+	return list, ttl, nil
 }
 
 func (s *Storage) ReadTransaction(obj model.Transaction) (model.Transaction, error) {

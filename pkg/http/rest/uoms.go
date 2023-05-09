@@ -31,14 +31,15 @@ func addUOM(s service.Service) gin.HandlerFunc {
 func getUOMs(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var res []model.UOM
+		var ttl int64
 		var err error
 
-		if res, err = s.GetUOMs(); err != nil {
+		if res, ttl, err = s.GetUOMs(c); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, Response{Success: true, Data: res})
+		paginate(c, res, ttl)
 	}
 }
 

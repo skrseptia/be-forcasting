@@ -89,13 +89,13 @@ func (s *service) AddTransaction(p model.Transaction, user string) (model.Transa
 	return trx, nil
 }
 
-func (s *service) GetTransactions(c *gin.Context) ([]model.Transaction, error) {
-	list, err := s.rmy.ReadTransactions(c)
+func (s *service) GetTransactions(c *gin.Context) ([]model.Transaction, int64, error) {
+	list, total, err := s.rmy.ReadTransactions(c)
 	if err != nil {
-		return list, err
+		return list, total, err
 	}
 
-	return list, nil
+	return list, total, nil
 }
 
 func (s *service) GetTransaction(p model.Transaction) (model.Transaction, error) {

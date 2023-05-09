@@ -31,14 +31,15 @@ func addCategory(s service.Service) gin.HandlerFunc {
 func getCategories(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var res []model.Category
+		var ttl int64
 		var err error
 
-		if res, err = s.GetCategories(); err != nil {
+		if res, ttl, err = s.GetCategories(c); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, Response{Success: true, Data: res})
+		paginate(c, res, ttl)
 	}
 }
 

@@ -5,10 +5,11 @@ import (
 	"food_delivery_api/pkg/model"
 	"food_delivery_api/pkg/service"
 	"food_delivery_api/pkg/util"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 func addTransaction(s service.Service) gin.HandlerFunc {
@@ -48,14 +49,15 @@ func addTransaction(s service.Service) gin.HandlerFunc {
 func getTransactions(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var res []model.Transaction
+		var ttl int64
 		var err error
 
-		if res, err = s.GetTransactions(c); err != nil {
+		if res, ttl, err = s.GetTransactions(c); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
 
-		successResponse(c, res)
+		paginate(c, res, ttl)
 	}
 }
 

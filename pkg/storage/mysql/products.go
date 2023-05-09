@@ -2,6 +2,8 @@ package mysql
 
 import (
 	"food_delivery_api/pkg/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (s *Storage) CreateProduct(obj model.Product) (model.Product, error) {
@@ -13,15 +15,17 @@ func (s *Storage) CreateProduct(obj model.Product) (model.Product, error) {
 	return obj, nil
 }
 
-func (s *Storage) ReadProducts() ([]model.Product, error) {
+func (s *Storage) ReadProducts(c *gin.Context) ([]model.Product, int64, error) {
 	var list []model.Product
+	var ttl int64
 
-	err := s.db.Preload("UOM").Find(&list).Error
+	s.db.Find(&list).Count(&ttl)
+	err := s.db.Preload("UOM").Scopes(Paginate(c)).Find(&list).Error
 	if err != nil {
-		return list, err
+		return list, ttl, err
 	}
 
-	return list, nil
+	return list, ttl, nil
 }
 
 func (s *Storage) ReadProduct(obj model.Product) (model.Product, error) {

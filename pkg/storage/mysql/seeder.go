@@ -10,6 +10,8 @@ import (
 	"math/rand"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func seedDB(s *Storage) error {
@@ -155,7 +157,8 @@ func seedDB(s *Storage) error {
 		usr := []string{"Super Admin", "Ikhsan Guntara"}
 		cst := []string{"Tamara Isnin", "Sekar Septi", "John Doe"}
 
-		products, err := s.ReadProducts()
+		var c gin.Context
+		products, _, err := s.ReadProducts(&c)
 		if err != nil {
 			return err
 		}

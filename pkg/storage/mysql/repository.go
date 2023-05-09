@@ -14,7 +14,7 @@ import (
 type RepositoryMySQL interface {
 	// Users
 	CreateUser(model.User) (model.User, error)
-	ReadUsers() ([]model.User, error)
+	ReadUsers(*gin.Context) ([]model.User, int64, error)
 	ReadUser(model.User) (model.User, error)
 	ReadUserByEmailPassword(model.User) (model.User, error)
 	UpdateUser(model.User) (model.User, error)
@@ -22,21 +22,21 @@ type RepositoryMySQL interface {
 
 	// Categories
 	CreateCategory(model.Category) (model.Category, error)
-	ReadCategories() ([]model.Category, error)
+	ReadCategories(*gin.Context) ([]model.Category, int64, error)
 	ReadCategory(model.Category) (model.Category, error)
 	UpdateCategory(model.Category) (model.Category, error)
 	DeleteCategory(model.Category) (model.Category, error)
 
 	// UOMs
 	CreateUOM(model.UOM) (model.UOM, error)
-	ReadUOMs() ([]model.UOM, error)
+	ReadUOMs(*gin.Context) ([]model.UOM, int64, error)
 	ReadUOM(model.UOM) (model.UOM, error)
 	UpdateUOM(model.UOM) (model.UOM, error)
 	DeleteUOM(model.UOM) (model.UOM, error)
 
 	// Products
 	CreateProduct(model.Product) (model.Product, error)
-	ReadProducts() ([]model.Product, error)
+	ReadProducts(*gin.Context) ([]model.Product, int64, error)
 	ReadProduct(model.Product) (model.Product, error)
 	UpdateProduct(model.Product) (model.Product, error)
 	DeleteProduct(model.Product) (model.Product, error)
@@ -44,7 +44,7 @@ type RepositoryMySQL interface {
 	// Transactions
 	CreateTransaction(model.Transaction) (model.Transaction, error)
 	CreateTransactions([]model.Transaction) ([]model.Transaction, error)
-	ReadTransactions(*gin.Context) ([]model.Transaction, error)
+	ReadTransactions(*gin.Context) ([]model.Transaction, int64, error)
 	ReadTransaction(model.Transaction) (model.Transaction, error)
 	UpdateTransaction(model.Transaction) (model.Transaction, error)
 	DeleteTransaction(model.Transaction) (model.Transaction, error)

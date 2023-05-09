@@ -32,13 +32,14 @@ func getProducts(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var res []model.Product
 		var err error
+		var ttl int64
 
-		if res, err = s.GetProducts(); err != nil {
+		if res, ttl, err = s.GetProducts(c); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, Response{Success: true, Data: res})
+		paginate(c, res, ttl)
 	}
 }
 

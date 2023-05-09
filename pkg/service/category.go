@@ -2,6 +2,8 @@ package service
 
 import (
 	"food_delivery_api/pkg/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (s *service) AddCategory(p model.Category) (model.Category, error) {
@@ -13,13 +15,13 @@ func (s *service) AddCategory(p model.Category) (model.Category, error) {
 	return obj, nil
 }
 
-func (s *service) GetCategories() ([]model.Category, error) {
-	list, err := s.rmy.ReadCategories()
+func (s *service) GetCategories(c *gin.Context) ([]model.Category, int64, error) {
+	list, ttl, err := s.rmy.ReadCategories(c)
 	if err != nil {
-		return list, err
+		return list, ttl, err
 	}
 
-	return list, nil
+	return list, ttl, nil
 }
 
 func (s *service) GetCategory(p model.Category) (model.Category, error) {

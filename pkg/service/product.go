@@ -2,6 +2,8 @@ package service
 
 import (
 	"food_delivery_api/pkg/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (s *service) AddProduct(p model.ProductRequest) (model.Product, error) {
@@ -26,13 +28,13 @@ func (s *service) AddProduct(p model.ProductRequest) (model.Product, error) {
 	return obj, nil
 }
 
-func (s *service) GetProducts() ([]model.Product, error) {
-	list, err := s.rmy.ReadProducts()
+func (s *service) GetProducts(c *gin.Context) ([]model.Product, int64, error) {
+	list, ttl, err := s.rmy.ReadProducts(c)
 	if err != nil {
-		return list, err
+		return list, ttl, err
 	}
 
-	return list, nil
+	return list, ttl, nil
 }
 
 func (s *service) GetProduct(p model.Product) (model.Product, error) {

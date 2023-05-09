@@ -2,6 +2,8 @@ package mysql
 
 import (
 	"food_delivery_api/pkg/model"
+
+	"github.com/gin-gonic/gin"
 )
 
 func (s *Storage) CreateCategory(obj model.Category) (model.Category, error) {
@@ -13,15 +15,17 @@ func (s *Storage) CreateCategory(obj model.Category) (model.Category, error) {
 	return obj, nil
 }
 
-func (s *Storage) ReadCategories() ([]model.Category, error) {
+func (s *Storage) ReadCategories(c *gin.Context) ([]model.Category, int64, error) {
 	var list []model.Category
+	var ttl int64
 
-	err := s.db.Find(&list).Error
+	s.db.Find(&list).Count(&ttl)
+	err := s.db.Scopes(Paginate(c)).Find(&list).Error
 	if err != nil {
-		return list, err
+		return list, ttl, err
 	}
 
-	return list, nil
+	return list, ttl, nil
 }
 
 func (s *Storage) ReadCategory(obj model.Category) (model.Category, error) {
