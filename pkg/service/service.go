@@ -43,6 +43,9 @@ type Service interface {
 	GetTransaction(model.Transaction) (model.Transaction, error)
 	EditTransaction(model.Transaction) (model.Transaction, error)
 	RemoveTransaction(model.Transaction) (model.Transaction, error)
+
+	// Reports
+	GetReportDashboard() (model.Dashboard, error)
 }
 
 type service struct {

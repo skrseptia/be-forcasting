@@ -56,6 +56,9 @@ type RepositoryMySQL interface {
 	ReadTransactionLine(model.TransactionLine) (model.TransactionLine, error)
 	UpdateTransactionLine(model.TransactionLine) (model.TransactionLine, error)
 	DeleteTransactionLine(model.TransactionLine) (model.TransactionLine, error)
+
+	// Reports
+	ReadReportDashboard() (model.Dashboard, error)
 }
 
 type Storage struct {

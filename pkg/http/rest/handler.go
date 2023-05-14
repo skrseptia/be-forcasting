@@ -58,6 +58,9 @@ func Handler(s service.Service) *gin.Engine {
 		v1.GET("/transactions/:id", getTransaction(s))
 		v1.PUT("/transactions/:id", editTransaction(s))
 		v1.DELETE("/transactions/:id", removeTransaction(s))
+
+		// Reports
+		v1.GET("/reports/dashboard", getReportDashboard(s))
 	}
 
 	return r

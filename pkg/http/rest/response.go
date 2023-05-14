@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"math"
 	"net/http"
 	"strconv"
 
@@ -43,7 +44,7 @@ func paginate(c *gin.Context, data interface{}, total int64) {
 		Data:       data,
 		Page:       page,
 		PageSize:   pageSize,
-		TotalPages: int(total/int64(pageSize)) + 1,
+		TotalPages: int(math.Ceil(float64(total) / float64(pageSize))),
 		TotalRows:  total,
 	})
 }
