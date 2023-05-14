@@ -52,7 +52,14 @@ func getTransactions(s service.Service) gin.HandlerFunc {
 		var ttl int64
 		var err error
 
-		if res, ttl, err = s.GetTransactions(c); err != nil {
+		qp := model.QueryGetTransactions{}
+		err = c.ShouldBindQuery(&qp)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		if res, ttl, err = s.GetTransactions(qp); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}

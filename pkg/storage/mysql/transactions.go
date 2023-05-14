@@ -1,9 +1,8 @@
 package mysql
 
 import (
+	"fmt"
 	"food_delivery_api/pkg/model"
-
-	"github.com/gin-gonic/gin"
 )
 
 func (s *Storage) CreateTransaction(obj model.Transaction) (model.Transaction, error) {
@@ -24,12 +23,40 @@ func (s *Storage) CreateTransactions(list []model.Transaction) ([]model.Transact
 	return list, nil
 }
 
-func (s *Storage) ReadTransactions(c *gin.Context) ([]model.Transaction, int64, error) {
+func (s *Storage) ReadTransactions(qp model.QueryGetTransactions) ([]model.Transaction, int64, error) {
 	var list []model.Transaction
 	var ttl int64
+	var err error
 
-	s.db.Find(&list).Count(&ttl)
-	err := s.db.Preload("TransactionLines").Scopes(Paginate(c)).Find(&list).Error
+	cust := fmt.Sprintf("%%%s%%", qp.Customer)
+
+	err = s.db.Find(&list).Where("customer LIKE ?", cust).Count(&ttl).Error
+	err = s.db.Preload("TransactionLines").
+		Where("customer LIKE ?", cust).
+		Scopes(Paginate(qp.QueryPagination)).
+		Find(&list).Error
+
+	if err != nil {
+		return list, ttl, err
+	}
+
+	return list, ttl, nil
+}
+
+func (s *Storage) ReadTransactionsBetweenDate(qp model.QueryGetTransactions) ([]model.Transaction, int64, error) {
+	var list []model.Transaction
+	var ttl int64
+	var err error
+
+	cust := fmt.Sprintf("%%%s%%", qp.Customer)
+
+	err = s.db.Find(&list).Where("customer LIKE ? AND created_at BETWEEN ? AND ?", cust, qp.StartDate, qp.EndDate).
+		Count(&ttl).Error
+	err = s.db.Preload("TransactionLines").
+		Where("customer LIKE ? AND created_at BETWEEN ? AND ?", cust, qp.StartDate, qp.EndDate).
+		Scopes(Paginate(qp.QueryPagination)).
+		Find(&list).Error
+
 	if err != nil {
 		return list, ttl, err
 	}

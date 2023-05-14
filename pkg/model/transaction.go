@@ -2,6 +2,7 @@ package model
 
 type Transaction struct {
 	Model
+	TrxDate          string            `json:"trx_date"`
 	TrxID            string            `json:"trx_id"`
 	CreatedBy        string            `json:"created_by"`
 	Customer         string            `json:"customer" binding:"required"`

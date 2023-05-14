@@ -34,7 +34,14 @@ func getCategories(s service.Service) gin.HandlerFunc {
 		var ttl int64
 		var err error
 
-		if res, ttl, err = s.GetCategories(c); err != nil {
+		qp := model.QueryPagination{}
+		err = c.ShouldBindQuery(&qp)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		if res, ttl, err = s.GetCategories(qp); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}

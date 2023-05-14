@@ -3,11 +3,10 @@ package service
 import (
 	"errors"
 	"fmt"
+	"food_delivery_api/cfg"
 	"food_delivery_api/pkg/model"
 	"strconv"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 func (s *service) AddTransaction(p model.Transaction, user string) (model.Transaction, error) {
@@ -89,13 +88,26 @@ func (s *service) AddTransaction(p model.Transaction, user string) (model.Transa
 	return trx, nil
 }
 
-func (s *service) GetTransactions(c *gin.Context) ([]model.Transaction, int64, error) {
-	list, total, err := s.rmy.ReadTransactions(c)
-	if err != nil {
-		return list, total, err
+func (s *service) GetTransactions(qp model.QueryGetTransactions) ([]model.Transaction, int64, error) {
+	var list []model.Transaction
+	var ttl int64
+	var err error
+
+	if qp.StartDate != "" && qp.EndDate != "" {
+		list, ttl, err = s.rmy.ReadTransactionsBetweenDate(qp)
+	} else {
+		list, ttl, err = s.rmy.ReadTransactions(qp)
 	}
 
-	return list, total, nil
+	if err != nil {
+		return list, ttl, err
+	}
+
+	for i, v := range list {
+		list[i].TrxDate = v.CreatedAt.Format(cfg.AppTLayout)
+	}
+
+	return list, ttl, nil
 }
 
 func (s *service) GetTransaction(p model.Transaction) (model.Transaction, error) {

@@ -2,8 +2,6 @@ package mysql
 
 import (
 	"food_delivery_api/pkg/model"
-
-	"github.com/gin-gonic/gin"
 )
 
 func (s *Storage) CreateUser(obj model.User) (model.User, error) {
@@ -15,12 +13,12 @@ func (s *Storage) CreateUser(obj model.User) (model.User, error) {
 	return obj, nil
 }
 
-func (s *Storage) ReadUsers(c *gin.Context) ([]model.User, int64, error) {
+func (s *Storage) ReadUsers(qp model.QueryPagination) ([]model.User, int64, error) {
 	var list []model.User
 	var ttl int64
 
 	s.db.Find(&list).Count(&ttl)
-	err := s.db.Scopes(Paginate(c)).Find(&list).Error
+	err := s.db.Scopes(Paginate(qp)).Find(&list).Error
 	if err != nil {
 		return list, ttl, err
 	}

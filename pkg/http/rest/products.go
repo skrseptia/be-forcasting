@@ -31,10 +31,17 @@ func addProduct(s service.Service) gin.HandlerFunc {
 func getProducts(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var res []model.Product
-		var err error
 		var ttl int64
+		var err error
 
-		if res, ttl, err = s.GetProducts(c); err != nil {
+		qp := model.QueryPagination{}
+		err = c.ShouldBindQuery(&qp)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		if res, ttl, err = s.GetProducts(qp); err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return
 		}

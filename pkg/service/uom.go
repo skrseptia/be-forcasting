@@ -2,8 +2,6 @@ package service
 
 import (
 	"food_delivery_api/pkg/model"
-
-	"github.com/gin-gonic/gin"
 )
 
 func (s *service) AddUOM(p model.UOM) (model.UOM, error) {
@@ -15,8 +13,8 @@ func (s *service) AddUOM(p model.UOM) (model.UOM, error) {
 	return obj, nil
 }
 
-func (s *service) GetUOMs(c *gin.Context) ([]model.UOM, int64, error) {
-	list, ttl, err := s.rmy.ReadUOMs(c)
+func (s *service) GetUOMs(qp model.QueryPagination) ([]model.UOM, int64, error) {
+	list, ttl, err := s.rmy.ReadUOMs(qp)
 	if err != nil {
 		return list, ttl, err
 	}

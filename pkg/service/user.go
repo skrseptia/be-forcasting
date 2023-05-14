@@ -2,8 +2,6 @@ package service
 
 import (
 	"food_delivery_api/pkg/model"
-
-	"github.com/gin-gonic/gin"
 )
 
 func (s *service) AddUser(p model.User) (model.User, error) {
@@ -18,8 +16,8 @@ func (s *service) AddUser(p model.User) (model.User, error) {
 	return obj, nil
 }
 
-func (s *service) GetUsers(c *gin.Context) ([]model.User, int64, error) {
-	list, ttl, err := s.rmy.ReadUsers(c)
+func (s *service) GetUsers(qp model.QueryPagination) ([]model.User, int64, error) {
+	list, ttl, err := s.rmy.ReadUsers(qp)
 	if err != nil {
 		return list, ttl, err
 	}

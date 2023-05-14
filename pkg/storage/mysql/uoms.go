@@ -2,8 +2,6 @@ package mysql
 
 import (
 	"food_delivery_api/pkg/model"
-
-	"github.com/gin-gonic/gin"
 )
 
 func (s *Storage) CreateUOM(obj model.UOM) (model.UOM, error) {
@@ -15,12 +13,12 @@ func (s *Storage) CreateUOM(obj model.UOM) (model.UOM, error) {
 	return obj, nil
 }
 
-func (s *Storage) ReadUOMs(c *gin.Context) ([]model.UOM, int64, error) {
+func (s *Storage) ReadUOMs(qp model.QueryPagination) ([]model.UOM, int64, error) {
 	var list []model.UOM
 	var ttl int64
 
 	s.db.Find(&list).Count(&ttl)
-	err := s.db.Scopes(Paginate(c)).Find(&list).Error
+	err := s.db.Scopes(Paginate(qp)).Find(&list).Error
 	if err != nil {
 		return list, ttl, err
 	}

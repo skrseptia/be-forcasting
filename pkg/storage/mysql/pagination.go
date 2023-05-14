@@ -1,16 +1,15 @@
 package mysql
 
 import (
-	"gorm.io/gorm"
-	"strconv"
+	"food_delivery_api/pkg/model"
 
-	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func Paginate(c *gin.Context) func(db *gorm.DB) *gorm.DB {
+func Paginate(qp model.QueryPagination) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		page, _ := strconv.Atoi(c.Query("page"))
-		pageSize, _ := strconv.Atoi(c.Query("page_size"))
+		page := qp.Page
+		pageSize := qp.PageSize
 
 		if page <= 0 {
 			page = 1

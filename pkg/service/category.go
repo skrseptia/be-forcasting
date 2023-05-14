@@ -2,8 +2,6 @@ package service
 
 import (
 	"food_delivery_api/pkg/model"
-
-	"github.com/gin-gonic/gin"
 )
 
 func (s *service) AddCategory(p model.Category) (model.Category, error) {
@@ -15,8 +13,8 @@ func (s *service) AddCategory(p model.Category) (model.Category, error) {
 	return obj, nil
 }
 
-func (s *service) GetCategories(c *gin.Context) ([]model.Category, int64, error) {
-	list, ttl, err := s.rmy.ReadCategories(c)
+func (s *service) GetCategories(qp model.QueryPagination) ([]model.Category, int64, error) {
+	list, ttl, err := s.rmy.ReadCategories(qp)
 	if err != nil {
 		return list, ttl, err
 	}
