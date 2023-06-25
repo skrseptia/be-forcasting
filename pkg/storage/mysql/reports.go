@@ -56,33 +56,83 @@ func (s *Storage) ReadReportDashboard() (model.Dashboard, error) {
     	sum(sub_total) as total_amount from transaction_lines group by product_id, name, price limit 5`).
 		Scan(&t5p)
 
-	// forming daily trx chart
-	var dc []model.DailyTrxChart
-	s.db.Raw(`select day(created_at) as day, month(created_at) as month, year(created_at) as year, sum(total) as amount
-		from transactions group by day(created_at), month(created_at), year(created_at)`).
-		Scan(&dc)
-
-	for i, v := range dc {
-		dc[i].Month = convertMonth(v.Month)
-	}
-
-	// forming monthly trx chart
-	var mc []model.MonthlyTrxChart
-	s.db.Raw(`select month(created_at) as month, year(created_at) as year, sum(total) as amount from transactions group by year(created_at), month(created_at)`).
-		Scan(&mc)
-
-	for i, v := range mc {
-		mc[i].Month = convertMonth(v.Month)
-	}
-
 	obj = model.Dashboard{
-		Summary:         sum,
-		CustomerTrx:     ct,
-		StockAlert:      sa,
-		Top10Trx:        t10,
-		Top5Product:     t5p,
-		DailyTrxChart:   dc,
-		MonthlyTrxChart: mc,
+		Summary:     sum,
+		CustomerTrx: ct,
+		StockAlert:  sa,
+		Top10Trx:    t10,
+		Top5Product: t5p,
+	}
+
+	return obj, nil
+}
+
+func (s *Storage) ReadReportChart() (model.Chart, error) {
+	var obj model.Chart
+
+	// forming daily trx chart
+	var dr []model.DailyRow
+	s.db.Raw(`select name as product, sum(qty) as qty, sum(sub_total) as amount from transaction_lines
+		where DATE(created_at) = CURDATE() group by name`).
+		Scan(&dr)
+
+	var amount []model.Dataset
+	var product []string
+	var qtySold []int
+	for _, v := range dr {
+		amount = append(amount, model.Dataset{Label: v.Product, Data: []int64{v.Amount}})
+		product = append(product, v.Product)
+		qtySold = append(qtySold, v.Qty)
+	}
+	qty := []model.Dataset{{Label: "# of Qty", Data: qtySold}}
+
+	dtac := model.ChartData{ChartType: "Vertical Bar Chart", Labels: []string{"Today"}, Datasets: amount}
+	dtqc := model.ChartData{ChartType: "Doughnut Chart", Labels: product, Datasets: qty}
+
+	// // forming monthly trx chart
+	// var mr []model.MonthlyRow
+	// s.db.Raw(`select month(created_at) as month, year(created_at) as year, sum(total) as amount from transactions group by year(created_at), month(created_at)`).
+	// 	Scan(&mr)
+	//
+	// var mtc model.MonthlyTrxChart
+	// mtc.ChartType = "Vertical Bar Chart"
+	//
+	// for i, v := range mr {
+	// 	mr[i].Month = convertMonth(v.Month)
+	// }
+
+	// // forming multi type chart
+	// var mtr []model.MultiTypeRow
+	// var mtrLabel []string
+	// var mtrCategory []string
+	//
+	// mChart := map[int]map[string]map[string]float64{}
+	//
+	// s.db.Raw(`select code from transaction_lines group by code`).Scan(&mtrCategory)
+	// s.db.Raw(`select date_format(transactions.created_at, '%Y-%m') as month, transaction_lines.code as category,
+	//    	sum(transaction_lines.sub_total) as total
+	// 	from transactions
+	//     join transaction_lines on transactions.id = transaction_lines.transaction_id
+	// 	group by month, category`).
+	// 	Scan(&mtr)
+	//
+	// for i, v := range mtr {
+	// 	mtrLabel = append(mtrLabel, v.Month)
+	// 	mChart[i] = map[string]map[string]float64{}
+	// 	mChart[i][v.Month] = map[string]float64{}
+	// 	mChart[i][v.Month][v.Category] = v.Total
+	// }
+	//
+	// mtc := model.MultiTypeChart{
+	// 	Labels:   nil,
+	// 	Datasets: nil,
+	// }
+
+	obj = model.Chart{
+		DailyTrxAmountChart: dtac,
+		DailyTrxQtyChart:    dtqc,
+		// MonthlyTrxChart:     mtc,
+		// MultiTypeChart:      mtc,
 	}
 
 	return obj, nil

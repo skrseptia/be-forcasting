@@ -44,6 +44,7 @@ type Service interface {
 
 	// Reports
 	GetReportDashboard() (model.Dashboard, error)
+	GetReportChart() (model.Chart, error)
 }
 
 type service struct {

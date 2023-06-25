@@ -161,7 +161,7 @@ func seedDB(s *Storage) error {
 			return err
 		}
 
-		for i := 90; i > 0; i-- {
+		for i := 174; i > 0; i-- {
 			// max limit trx per day
 			limit := rand.Intn(20) + 1
 
@@ -171,11 +171,15 @@ func seedDB(s *Storage) error {
 				var lines []model.TransactionLine
 				var total float64
 
+				date := time.Now().AddDate(0, 0, -(i))
+				id += 1
+
 				for k := 0; k < tl; k++ {
 					prd := products[rand.Intn(len(products))]
 					qty := rand.Intn(50) + 1
 					subTotal := prd.Price * float64(qty)
 					lines = append(lines, model.TransactionLine{
+						Model:         model.Model{CreatedAt: date, UpdatedAt: date},
 						TransactionID: id,
 						ProductID:     prd.ID,
 						Code:          prd.Code,
@@ -191,8 +195,6 @@ func seedDB(s *Storage) error {
 				}
 
 				// create trx header
-				date := time.Now().AddDate(0, 0, -(i))
-				id += 1
 				trxs = append(trxs, model.Transaction{
 					Model:            model.Model{ID: id, CreatedAt: date, UpdatedAt: date},
 					TrxID:            fmt.Sprintf("TRX-%s", strconv.FormatInt(date.UnixNano(), 10)),

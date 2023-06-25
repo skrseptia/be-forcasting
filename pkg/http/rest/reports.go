@@ -18,3 +18,15 @@ func getReportDashboard(s service.Service) gin.HandlerFunc {
 		c.JSON(http.StatusOK, Response{Success: true, Data: res})
 	}
 }
+
+func getReportChart(s service.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		res, err := s.GetReportChart()
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, Response{Success: true, Data: res})
+	}
+}

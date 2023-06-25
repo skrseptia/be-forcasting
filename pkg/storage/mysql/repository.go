@@ -59,6 +59,7 @@ type RepositoryMySQL interface {
 
 	// Reports
 	ReadReportDashboard() (model.Dashboard, error)
+	ReadReportChart() (model.Chart, error)
 }
 
 type Storage struct {

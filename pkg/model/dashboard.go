@@ -3,13 +3,11 @@ package model
 import "time"
 
 type Dashboard struct {
-	Summary         Summary           `json:"summary"`
-	CustomerTrx     []CustomerTrx     `json:"customer_trx"`
-	StockAlert      []StockAlert      `json:"stock_alert"`
-	Top10Trx        []Top10Trx        `json:"top_10_trx"`
-	Top5Product     []Top5Product     `json:"top_5_product"`
-	DailyTrxChart   []DailyTrxChart   `json:"daily_trx_chart"`
-	MonthlyTrxChart []MonthlyTrxChart `json:"monthly_trx_chart"`
+	Summary     Summary       `json:"summary"`
+	CustomerTrx []CustomerTrx `json:"customer_trx"`
+	StockAlert  []StockAlert  `json:"stock_alert"`
+	Top10Trx    []Top10Trx    `json:"top_10_trx"`
+	Top5Product []Top5Product `json:"top_5_product"`
 }
 
 type Summary struct {
@@ -51,17 +49,4 @@ type Top5Product struct {
 	TotalQty      int     `json:"total_qty"`
 	AverageAmount float64 `json:"average_amount"`
 	TotalAmount   float64 `json:"total_amount"`
-}
-
-type MonthlyTrxChart struct {
-	Month  string  `json:"month"`
-	Year   int     `json:"year"`
-	Amount float64 `json:"amount"`
-}
-
-type DailyTrxChart struct {
-	Day    int     `json:"day"`
-	Month  string  `json:"month"`
-	Year   int     `json:"year"`
-	Amount float64 `json:"amount"`
 }

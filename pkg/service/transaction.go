@@ -116,6 +116,8 @@ func (s *service) GetTransaction(p model.Transaction) (model.Transaction, error)
 		return obj, err
 	}
 
+	obj.TrxDate = obj.CreatedAt.Format(cfg.AppTLayout)
+
 	return obj, nil
 }
 
