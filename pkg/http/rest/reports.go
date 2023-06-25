@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"food_delivery_api/pkg/model"
 	"food_delivery_api/pkg/service"
 	"net/http"
 
@@ -22,6 +23,25 @@ func getReportDashboard(s service.Service) gin.HandlerFunc {
 func getReportChart(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		res, err := s.GetReportChart()
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, Response{Success: true, Data: res})
+	}
+}
+
+func getReportExponentialSmoothing(s service.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		qp := model.QueryGetExponentialSmoothing{}
+		err := c.ShouldBindQuery(&qp)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		res, err := s.GetReportExponentialSmoothing(qp)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
 			return

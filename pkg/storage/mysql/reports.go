@@ -128,41 +128,24 @@ func (s *Storage) ReadReportChart() (model.Chart, error) {
 
 	mtac := model.ChartData{ChartType: "Line Chart", Labels: months, Datasets: mtacd}
 
-	// // forming multi type chart
-	// var mtr []model.MultiTypeRow
-	// var mtrLabel []string
-	// var mtrCategory []string
-	//
-	// mChart := map[int]map[string]map[string]float64{}
-	//
-	// s.db.Raw(`select code from transaction_lines group by code`).Scan(&mtrCategory)
-	// s.db.Raw(`select date_format(transactions.created_at, '%Y-%m') as month, transaction_lines.code as category,
-	//    	sum(transaction_lines.sub_total) as total
-	// 	from transactions
-	//     join transaction_lines on transactions.id = transaction_lines.transaction_id
-	// 	group by month, category`).
-	// 	Scan(&mtr)
-	//
-	// for i, v := range mtr {
-	// 	mtrLabel = append(mtrLabel, v.Month)
-	// 	mChart[i] = map[string]map[string]float64{}
-	// 	mChart[i][v.Month] = map[string]float64{}
-	// 	mChart[i][v.Month][v.Category] = v.Total
-	// }
-	//
-	// mtc := model.MultiTypeChart{
-	// 	Labels:   nil,
-	// 	Datasets: nil,
-	// }
-
 	obj = model.Chart{
 		DailyTrxAmountChart:   dtac,
 		DailyTrxQtyChart:      dtqc,
 		MonthlyTrxAmountChart: mtac,
-		// MultiTypeChart:      mtc,
 	}
 
 	return obj, nil
+}
+
+func (s *Storage) ReadReportExponentialSmoothing(qp model.QueryGetExponentialSmoothing) ([]model.ExponentialSmoothingRow, error) {
+	var list []model.ExponentialSmoothingRow
+
+	s.db.Raw(`select date_format(created_at, '%Y-%m') as month, product_id, name, sum(qty) as qty
+		from transaction_lines where created_at between date(?) AND date(?) group by month, product_id, name`,
+		qp.StartDate, qp.EndDate).
+		Scan(&list)
+
+	return list, nil
 }
 
 func convertMonth(strMonth string) string {

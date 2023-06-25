@@ -11,3 +11,9 @@ type QueryGetTransactions struct {
 	Customer  string `form:"customer"`
 	QueryPagination
 }
+
+type QueryGetExponentialSmoothing struct {
+	StartDate string `form:"start_date"`
+	EndDate   string `form:"end_date"`
+	ProductID string `form:"product_id"`
+}

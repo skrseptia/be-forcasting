@@ -62,6 +62,7 @@ func Handler(s service.Service) *gin.Engine {
 		// Reports
 		v1.GET("/reports/dashboard", getReportDashboard(s))
 		v1.GET("/reports/chart", getReportChart(s))
+		v1.GET("/reports/exponential-smoothing", getReportExponentialSmoothing(s))
 	}
 
 	return r
