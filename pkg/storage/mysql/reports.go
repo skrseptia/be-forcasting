@@ -3,6 +3,7 @@ package mysql
 import (
 	"food_delivery_api/cfg"
 	"food_delivery_api/pkg/model"
+	"sort"
 	"time"
 )
 
@@ -89,17 +90,43 @@ func (s *Storage) ReadReportChart() (model.Chart, error) {
 	dtac := model.ChartData{ChartType: "Vertical Bar Chart", Labels: []string{"Today"}, Datasets: amount}
 	dtqc := model.ChartData{ChartType: "Doughnut Chart", Labels: product, Datasets: qty}
 
-	// // forming monthly trx chart
-	// var mr []model.MonthlyRow
-	// s.db.Raw(`select month(created_at) as month, year(created_at) as year, sum(total) as amount from transactions group by year(created_at), month(created_at)`).
-	// 	Scan(&mr)
-	//
-	// var mtc model.MonthlyTrxChart
-	// mtc.ChartType = "Vertical Bar Chart"
-	//
-	// for i, v := range mr {
-	// 	mr[i].Month = convertMonth(v.Month)
-	// }
+	// forming monthly trx chart
+	var mr []model.MonthlyRow
+	s.db.Raw(`select month(created_at) as month, code as category, name as product, sum(qty) as qty, sum(sub_total) as amount
+		from transaction_lines group by month, code, name`).
+		Scan(&mr)
+
+	var months []string
+	var mproducts []string
+	for _, v := range mr {
+		m := convertMonth(v.Month)
+		if !contains(months, m) {
+			months = append(months, m)
+		}
+
+		if !contains(mproducts, v.Product) {
+			mproducts = append(mproducts, v.Product)
+		}
+	}
+
+	var mtacd []model.Dataset
+	for _, v := range mproducts {
+		var data []int64
+		for _, row := range mr {
+			if row.Product == v {
+				data = append(data, row.Amount)
+			}
+		}
+
+		mtacd = append(mtacd, model.Dataset{Label: v, Data: data})
+	}
+
+	// Sort the dataset alphabetically based on the label
+	sort.Slice(mtacd, func(i, j int) bool {
+		return mtacd[i].Label < mtacd[j].Label
+	})
+
+	mtac := model.ChartData{ChartType: "Line Chart", Labels: months, Datasets: mtacd}
 
 	// // forming multi type chart
 	// var mtr []model.MultiTypeRow
@@ -129,9 +156,9 @@ func (s *Storage) ReadReportChart() (model.Chart, error) {
 	// }
 
 	obj = model.Chart{
-		DailyTrxAmountChart: dtac,
-		DailyTrxQtyChart:    dtqc,
-		// MonthlyTrxChart:     mtc,
+		DailyTrxAmountChart:   dtac,
+		DailyTrxQtyChart:      dtqc,
+		MonthlyTrxAmountChart: mtac,
 		// MultiTypeChart:      mtc,
 	}
 
@@ -141,4 +168,13 @@ func (s *Storage) ReadReportChart() (model.Chart, error) {
 func convertMonth(strMonth string) string {
 	date, _ := time.Parse("1", strMonth)
 	return date.Month().String()
+}
+
+func contains(list []string, value string) bool {
+	for _, str := range list {
+		if str == value {
+			return true
+		}
+	}
+	return false
 }
