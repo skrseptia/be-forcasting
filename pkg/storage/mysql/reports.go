@@ -77,17 +77,17 @@ func (s *Storage) ReadReportChart() (model.Chart, error) {
 		where DATE(created_at) = CURDATE() group by name`).
 		Scan(&dr)
 
-	var amount []model.Dataset
+	var quantities []model.Dataset
 	var product []string
 	var qtySold []int
 	for _, v := range dr {
-		amount = append(amount, model.Dataset{Label: v.Product, Data: []int64{v.Amount}})
+		quantities = append(quantities, model.Dataset{Label: v.Product, Data: []int{v.Qty}})
 		product = append(product, v.Product)
 		qtySold = append(qtySold, v.Qty)
 	}
 	qty := []model.Dataset{{Label: "# of Qty", Data: qtySold}}
 
-	dtac := model.ChartData{ChartType: "Vertical Bar Chart", Labels: []string{"Today"}, Datasets: amount}
+	dtac := model.ChartData{ChartType: "Vertical Bar Chart", Labels: []string{"Today Transaction (Qty)"}, Datasets: quantities}
 	dtqc := model.ChartData{ChartType: "Doughnut Chart", Labels: product, Datasets: qty}
 
 	// forming monthly trx chart
@@ -111,10 +111,10 @@ func (s *Storage) ReadReportChart() (model.Chart, error) {
 
 	var mtacd []model.Dataset
 	for _, v := range mproducts {
-		var data []int64
+		var data []int
 		for _, row := range mr {
 			if row.Product == v {
-				data = append(data, row.Amount)
+				data = append(data, row.Qty)
 			}
 		}
 
