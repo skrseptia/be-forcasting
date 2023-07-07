@@ -53,7 +53,8 @@ type ExponentialSmoothingData struct {
 }
 
 type ExponentialSmoothingDataset struct {
-	Period   string  `json:"period"`
-	Actual   float64 `json:"actual"`
-	Forecast float64 `json:"forecast"`
+	Period      string  `json:"period"`
+	Actual      float64 `json:"actual"`
+	Forecast    float64 `json:"forecast"`
+	Formulation string  `json:"formulation"`
 }

@@ -58,7 +58,7 @@ func (s *service) GetReportExponentialSmoothing(qp model.QueryGetExponentialSmoo
 
 		// forming exponential smoothing data
 		var productID int
-		var name, month string
+		var name, month, formulation string
 		var prevQty, prevForecast float64
 		var dataset []model.ExponentialSmoothingDataset
 
@@ -76,14 +76,16 @@ func (s *service) GetReportExponentialSmoothing(qp model.QueryGetExponentialSmoo
 			// set prediction equal with actual on the first data
 			if prevForecast == 0 {
 				prevForecast = prevQty
+				formulation = fmt.Sprintf("formulation: %v = %v", prevQty, prevQty)
 			} else {
-				prevForecast = exponentialSmoothing(prevQty, prevForecast, smoothingFactor)
+				prevForecast, formulation = exponentialSmoothing(prevQty, prevForecast, smoothingFactor)
 			}
 
 			dataset = append(dataset, model.ExponentialSmoothingDataset{
-				Period:   row.Month,
-				Actual:   prevQty,
-				Forecast: prevForecast,
+				Period:      row.Month,
+				Actual:      prevQty,
+				Forecast:    prevForecast,
+				Formulation: formulation,
 			})
 		}
 
@@ -95,10 +97,12 @@ func (s *service) GetReportExponentialSmoothing(qp model.QueryGetExponentialSmoo
 		oneMonthLater := date.AddDate(0, 1, 0)
 		month = oneMonthLater.Format("2006-01")
 
+		prevForecast, formulation = exponentialSmoothing(prevQty, prevForecast, smoothingFactor)
 		dataset = append(dataset, model.ExponentialSmoothingDataset{
-			Period:   month,
-			Actual:   0,
-			Forecast: exponentialSmoothing(prevQty, prevForecast, smoothingFactor),
+			Period:      month,
+			Actual:      0,
+			Forecast:    prevForecast,
+			Formulation: formulation,
 		})
 
 		m := convertMonth(month)
@@ -118,9 +122,11 @@ func (s *service) GetReportExponentialSmoothing(qp model.QueryGetExponentialSmoo
 	for _, v := range esds {
 		var actuals []float64
 		var forecast []float64
+		var formulations []string
 		for _, data := range v.Dataset {
 			actuals = append(actuals, data.Actual)
 			forecast = append(forecast, data.Forecast)
+			formulations = append(formulations, data.Formulation)
 		}
 
 		mescd = append(mescd, model.Dataset{
@@ -131,6 +137,11 @@ func (s *service) GetReportExponentialSmoothing(qp model.QueryGetExponentialSmoo
 		mescd = append(mescd, model.Dataset{
 			Label: fmt.Sprintf("Forecast - %s", v.Name),
 			Data:  forecast,
+		})
+
+		mescd = append(mescd, model.Dataset{
+			Label: fmt.Sprintf("Formulation - %s", v.Name),
+			Data:  formulations,
 		})
 	}
 
@@ -176,11 +187,12 @@ func contains(list []string, value string) bool {
 	return false
 }
 
-func exponentialSmoothing(prevQty float64, prevForecast float64, smoothingFactor float64) float64 {
+func exponentialSmoothing(prevQty float64, prevForecast float64, smoothingFactor float64) (float64, string) {
 	forecast := prevForecast + smoothingFactor*(prevQty-prevForecast)
 
 	// format two decimal places
 	formatted := math.Round(forecast*100) / 100
+	formulation := fmt.Sprintf("formulation: %v + %v * (%v - %v) = %v", prevForecast, smoothingFactor, prevQty, prevForecast, formatted)
 
-	return formatted
+	return formatted, formulation
 }
