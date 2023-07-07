@@ -155,6 +155,84 @@ func (s *service) GetReportExponentialSmoothing(qp model.QueryGetExponentialSmoo
 	return obj, nil
 }
 
+func (s *service) GetReportMonthlyExponentialSmoothing(qp model.QueryGetExponentialSmoothing) ([]model.MonthlyExponentialSmoothingDataset, error) {
+	var obj []model.MonthlyExponentialSmoothingDataset
+
+	// get total qty from database for all products
+	list, err := s.rmy.ReadReportExponentialSmoothing(qp)
+	if err != nil {
+		return obj, err
+	}
+
+	// filter data by query params input
+	ids := convertQueryParamID(qp.ProductID)
+
+	// forming data exponential smoothing
+	var smoothingFactor float64
+	var name string
+
+	for _, id := range ids {
+		// forming selected data by product id
+		var rows []model.ExponentialSmoothingRow
+		for _, v := range list {
+			if v.ProductID == id {
+				rows = append(rows, v)
+			}
+		}
+
+		// count alpha
+		smoothingFactor = 2 / (float64(len(rows)) + 1)
+
+		// forming exponential smoothing data
+		var month, formulation string
+		var prevQty, prevForecast float64
+
+		for _, row := range rows {
+			name = row.Name
+			month = row.Month
+			prevQty = float64(row.Qty)
+
+			m := convertMonth(row.Month)
+
+			// set prediction equal with actual on the first data
+			if prevForecast == 0 {
+				prevForecast = prevQty
+				formulation = fmt.Sprintf("formulation: %v = %v", prevQty, prevQty)
+			} else {
+				prevForecast, formulation = exponentialSmoothing(prevQty, prevForecast, smoothingFactor)
+			}
+
+			obj = append(obj, model.MonthlyExponentialSmoothingDataset{
+				Name:        name,
+				Period:      m,
+				Actual:      prevQty,
+				Forecast:    prevForecast,
+				Formulation: formulation,
+			})
+		}
+
+		// add prediction into dataset
+		date, err := time.Parse("2006-01", month)
+		if err != nil {
+			return obj, err
+		}
+		oneMonthLater := date.AddDate(0, 1, 0)
+		month = oneMonthLater.Format("2006-01")
+		m := convertMonth(month)
+
+		prevForecast, formulation = exponentialSmoothing(prevQty, prevForecast, smoothingFactor)
+		obj = append(obj, model.MonthlyExponentialSmoothingDataset{
+			Name:        name,
+			Period:      m,
+			Actual:      0,
+			Forecast:    prevForecast,
+			Formulation: formulation,
+		})
+	}
+
+	return obj, nil
+}
+
 func convertQueryParamID(s string) []int {
 	values := strings.Split(s, ",")
 	list := make([]int, len(values))

@@ -46,6 +46,7 @@ type Service interface {
 	GetReportDashboard() (model.Dashboard, error)
 	GetReportChart() (model.Chart, error)
 	GetReportExponentialSmoothing(model.QueryGetExponentialSmoothing) (model.ExponentialSmoothingChart, error)
+	GetReportMonthlyExponentialSmoothing(model.QueryGetExponentialSmoothing) ([]model.MonthlyExponentialSmoothingDataset, error)
 }
 
 type service struct {

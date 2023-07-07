@@ -52,6 +52,14 @@ type ExponentialSmoothingData struct {
 	Dataset         []ExponentialSmoothingDataset `json:"dataset"`
 }
 
+type MonthlyExponentialSmoothingDataset struct {
+	Name        string  `json:"name"`
+	Period      string  `json:"period"`
+	Actual      float64 `json:"actual"`
+	Forecast    float64 `json:"forecast"`
+	Formulation string  `json:"formulation"`
+}
+
 type ExponentialSmoothingDataset struct {
 	Period      string  `json:"period"`
 	Actual      float64 `json:"actual"`
