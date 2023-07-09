@@ -45,7 +45,7 @@ func (s *Storage) ReadProduct(obj model.Product) (model.Product, error) {
 }
 
 func (s *Storage) UpdateProduct(obj model.Product) (model.Product, error) {
-	err := s.db.Model(&obj).Select("*").Updates(obj).Error
+	err := s.db.Model(&obj).Updates(obj).Error
 	if err != nil {
 		return obj, err
 	}
