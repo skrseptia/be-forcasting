@@ -30,6 +30,24 @@ func addUser(s service.Service) gin.HandlerFunc {
 	}
 }
 
+func addUsers(s service.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		file, err := c.FormFile("file")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		res, err := s.AddUsers(file)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, Response{Success: true, Data: res})
+	}
+}
+
 func getUsers(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var res []model.User

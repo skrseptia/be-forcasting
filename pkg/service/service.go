@@ -3,11 +3,13 @@ package service
 import (
 	"food_delivery_api/pkg/model"
 	"food_delivery_api/pkg/storage/mysql"
+	"mime/multipart"
 )
 
 type Service interface {
 	// User
 	AddUser(model.User) (model.User, error)
+	AddUsers(*multipart.FileHeader) (model.Upload, error)
 	GetUsers(model.QueryPagination) ([]model.User, int64, error)
 	GetUser(model.User) (model.User, error)
 	GetUserByEmailPassword(model.User) (model.User, error)

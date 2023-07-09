@@ -25,6 +25,7 @@ func Handler(s service.Service) *gin.Engine {
 	{
 		// Users
 		v1.POST("/users", addUser(s))
+		v1.POST("/users/upload", addUsers(s))
 		v1.GET("/users", getUsers(s))
 		v1.GET("/users/:id", getUser(s))
 		v1.GET("/users/me", getLoggedUser(s))

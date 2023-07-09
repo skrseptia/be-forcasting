@@ -13,6 +13,7 @@ import (
 type RepositoryMySQL interface {
 	// Users
 	CreateUser(model.User) (model.User, error)
+	CreateUsers(string, string, []model.User) (model.Upload, error)
 	ReadUsers(model.QueryPagination) ([]model.User, int64, error)
 	ReadUser(model.User) (model.User, error)
 	ReadUserByEmailPassword(model.User) (model.User, error)
