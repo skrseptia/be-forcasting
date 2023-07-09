@@ -13,20 +13,13 @@ func (s *Storage) CreateUser(obj model.User) (model.User, error) {
 	return obj, nil
 }
 
-func (s *Storage) CreateUsers(file string, table string, list []model.User) (model.Upload, error) {
-	var res model.Upload
-	tx := s.db.Create(&list)
-	if tx.Error != nil {
-		return res, tx.Error
+func (s *Storage) CreateUsers(list []model.User) ([]model.User, error) {
+	err := s.db.Create(&list).Error
+	if err != nil {
+		return list, err
 	}
 
-	res = model.Upload{
-		File:         file,
-		Table:        table,
-		RowsAffected: tx.RowsAffected,
-	}
-
-	return res, nil
+	return list, nil
 }
 
 func (s *Storage) ReadUsers(qp model.QueryPagination) ([]model.User, int64, error) {

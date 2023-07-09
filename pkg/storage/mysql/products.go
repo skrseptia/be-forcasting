@@ -13,6 +13,15 @@ func (s *Storage) CreateProduct(obj model.Product) (model.Product, error) {
 	return obj, nil
 }
 
+func (s *Storage) CreateProducts(list []model.Product) ([]model.Product, error) {
+	err := s.db.Create(&list).Error
+	if err != nil {
+		return list, err
+	}
+
+	return list, nil
+}
+
 func (s *Storage) ReadProducts(qp model.QueryPagination) ([]model.Product, int64, error) {
 	var list []model.Product
 	var ttl int64

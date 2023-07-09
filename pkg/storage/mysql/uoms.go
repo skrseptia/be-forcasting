@@ -13,6 +13,15 @@ func (s *Storage) CreateUOM(obj model.UOM) (model.UOM, error) {
 	return obj, nil
 }
 
+func (s *Storage) CreateUOMs(list []model.UOM) ([]model.UOM, error) {
+	err := s.db.Create(&list).Error
+	if err != nil {
+		return list, err
+	}
+
+	return list, nil
+}
+
 func (s *Storage) ReadUOMs(qp model.QueryPagination) ([]model.UOM, int64, error) {
 	var list []model.UOM
 	var ttl int64

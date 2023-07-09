@@ -13,7 +13,7 @@ import (
 type RepositoryMySQL interface {
 	// Users
 	CreateUser(model.User) (model.User, error)
-	CreateUsers(string, string, []model.User) (model.Upload, error)
+	CreateUsers([]model.User) ([]model.User, error)
 	ReadUsers(model.QueryPagination) ([]model.User, int64, error)
 	ReadUser(model.User) (model.User, error)
 	ReadUserByEmailPassword(model.User) (model.User, error)
@@ -22,6 +22,7 @@ type RepositoryMySQL interface {
 
 	// Categories
 	CreateCategory(model.Category) (model.Category, error)
+	CreateCategories([]model.Category) ([]model.Category, error)
 	ReadCategories(model.QueryPagination) ([]model.Category, int64, error)
 	ReadCategory(model.Category) (model.Category, error)
 	UpdateCategory(model.Category) (model.Category, error)
@@ -29,6 +30,7 @@ type RepositoryMySQL interface {
 
 	// UOMs
 	CreateUOM(model.UOM) (model.UOM, error)
+	CreateUOMs([]model.UOM) ([]model.UOM, error)
 	ReadUOMs(model.QueryPagination) ([]model.UOM, int64, error)
 	ReadUOM(model.UOM) (model.UOM, error)
 	UpdateUOM(model.UOM) (model.UOM, error)
@@ -36,6 +38,7 @@ type RepositoryMySQL interface {
 
 	// Products
 	CreateProduct(model.Product) (model.Product, error)
+	CreateProducts([]model.Product) ([]model.Product, error)
 	ReadProducts(model.QueryPagination) ([]model.Product, int64, error)
 	ReadProduct(model.Product) (model.Product, error)
 	UpdateProduct(model.Product) (model.Product, error)

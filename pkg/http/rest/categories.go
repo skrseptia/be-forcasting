@@ -28,6 +28,24 @@ func addCategory(s service.Service) gin.HandlerFunc {
 	}
 }
 
+func addCategories(s service.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		file, err := c.FormFile("file")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		res, err := s.AddCategories(file)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, Response{Success: true, Data: res})
+	}
+}
+
 func getCategories(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var res []model.Category

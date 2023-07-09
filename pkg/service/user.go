@@ -22,6 +22,9 @@ func (s *service) AddUser(p model.User) (model.User, error) {
 
 func (s *service) AddUsers(f *multipart.FileHeader) (model.Upload, error) {
 	var res model.Upload
+	var list []model.User
+	tableName := "users"
+	ttlColumn := 7
 
 	src, err := f.Open()
 	if err != nil {
@@ -38,10 +41,6 @@ func (s *service) AddUsers(f *multipart.FileHeader) (model.Upload, error) {
 	if err != nil {
 		return res, err
 	}
-
-	var list []model.User
-	tableName := "users"
-	ttlColumn := 7
 
 	for i, row := range rows {
 		// skip header row
@@ -64,9 +63,15 @@ func (s *service) AddUsers(f *multipart.FileHeader) (model.Upload, error) {
 		})
 	}
 
-	res, err = s.rmy.CreateUsers(f.Filename, tableName, list)
+	listTx, err := s.rmy.CreateUsers(list)
 	if err != nil {
 		return res, err
+	}
+
+	res = model.Upload{
+		File:         f.Filename,
+		Table:        tableName,
+		RowsAffected: len(listTx),
 	}
 
 	return res, nil

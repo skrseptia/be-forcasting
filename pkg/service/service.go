@@ -18,6 +18,7 @@ type Service interface {
 
 	// Category
 	AddCategory(model.Category) (model.Category, error)
+	AddCategories(*multipart.FileHeader) (model.Upload, error)
 	GetCategories(model.QueryPagination) ([]model.Category, int64, error)
 	GetCategory(model.Category) (model.Category, error)
 	EditCategory(model.Category) (model.Category, error)
@@ -25,6 +26,7 @@ type Service interface {
 
 	// UOM
 	AddUOM(model.UOM) (model.UOM, error)
+	AddUOMs(*multipart.FileHeader) (model.Upload, error)
 	GetUOMs(model.QueryPagination) ([]model.UOM, int64, error)
 	GetUOM(model.UOM) (model.UOM, error)
 	EditUOM(model.UOM) (model.UOM, error)
@@ -32,6 +34,7 @@ type Service interface {
 
 	// Product
 	AddProduct(model.ProductRequest) (model.Product, error)
+	AddProducts(*multipart.FileHeader) (model.Upload, error)
 	GetProducts(model.QueryPagination) ([]model.Product, int64, error)
 	GetProduct(model.Product) (model.Product, error)
 	EditProduct(model.ProductRequest) (model.Product, error)

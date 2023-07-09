@@ -34,6 +34,7 @@ func Handler(s service.Service) *gin.Engine {
 
 		// Categories
 		v1.POST("/categories", addCategory(s))
+		v1.POST("/categories/upload", addCategories(s))
 		v1.GET("/categories", getCategories(s))
 		v1.GET("/categories/:id", getCategory(s))
 		v1.PUT("/categories/:id", editCategory(s))
@@ -41,6 +42,7 @@ func Handler(s service.Service) *gin.Engine {
 
 		// UOMs
 		v1.POST("/uoms", addUOM(s))
+		v1.POST("/uoms/upload", addUOMs(s))
 		v1.GET("/uoms", getUOMs(s))
 		v1.GET("/uoms/:id", getUOM(s))
 		v1.PUT("/uoms/:id", editUOM(s))
@@ -48,6 +50,7 @@ func Handler(s service.Service) *gin.Engine {
 
 		// Products
 		v1.POST("/products", addProduct(s))
+		v1.POST("/products/upload", addProducts(s))
 		v1.GET("/products", getProducts(s))
 		v1.GET("/products/:id", getProduct(s))
 		v1.PUT("/products/:id", editProduct(s))

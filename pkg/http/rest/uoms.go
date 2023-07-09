@@ -28,6 +28,24 @@ func addUOM(s service.Service) gin.HandlerFunc {
 	}
 }
 
+func addUOMs(s service.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		file, err := c.FormFile("file")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		res, err := s.AddUOMs(file)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, Response{Success: true, Data: res})
+	}
+}
+
 func getUOMs(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var res []model.UOM
