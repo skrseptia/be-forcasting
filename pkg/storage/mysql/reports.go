@@ -140,8 +140,8 @@ func (s *Storage) ReadReportChart() (model.Chart, error) {
 func (s *Storage) ReadReportExponentialSmoothing(qp model.QueryGetExponentialSmoothing) ([]model.ExponentialSmoothingRow, error) {
 	var list []model.ExponentialSmoothingRow
 
-	s.db.Raw(`select date_format(created_at, '%Y-%m') as month, product_id, name, sum(qty) as qty
-		from transaction_lines where created_at between date(?) AND date(?) group by month, product_id, name`,
+	s.db.Raw(`select date_format(created_at, '%Y-%m') as month, product_id, name, uom, sum(qty) as qty
+		from transaction_lines where created_at between date(?) AND date(?) group by month, product_id, name, uom`,
 		qp.StartDate, qp.EndDate).
 		Scan(&list)
 

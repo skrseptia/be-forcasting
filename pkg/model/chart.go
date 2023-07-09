@@ -8,6 +8,7 @@ type Chart struct {
 
 type Dataset struct {
 	Label string      `json:"label"`
+	UOM   string      `json:"uom"`
 	Data  interface{} `json:"data"`
 }
 
@@ -42,27 +43,30 @@ type ExponentialSmoothingRow struct {
 	Month     string `json:"month"`
 	ProductID int    `json:"product_id"`
 	Name      string `json:"name"`
+	UOM       string `json:"uom"`
 	Qty       int    `json:"qty"`
 }
 
 type ExponentialSmoothingData struct {
 	ProductID       int                           `json:"product_id"`
 	Name            string                        `json:"name"`
+	UOM             string                        `json:"uom"`
 	SmoothingFactor float64                       `json:"smoothing_factor"`
 	Dataset         []ExponentialSmoothingDataset `json:"dataset"`
 }
 
 type MonthlyExponentialSmoothingDataset struct {
-	Name        string  `json:"name"`
-	Period      string  `json:"period"`
-	Actual      float64 `json:"actual"`
-	Forecast    float64 `json:"forecast"`
-	Formulation string  `json:"formulation"`
+	Name        string `json:"name"`
+	UOM         string `json:"uom"`
+	Period      string `json:"period"`
+	Actual      int    `json:"actual"`
+	Forecast    int    `json:"forecast"`
+	Formulation string `json:"formulation"`
 }
 
 type ExponentialSmoothingDataset struct {
-	Period      string  `json:"period"`
-	Actual      float64 `json:"actual"`
-	Forecast    float64 `json:"forecast"`
-	Formulation string  `json:"formulation"`
+	Period      string `json:"period"`
+	Actual      int    `json:"actual"`
+	Forecast    int    `json:"forecast"`
+	Formulation string `json:"formulation"`
 }
