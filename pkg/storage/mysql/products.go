@@ -26,8 +26,8 @@ func (s *Storage) ReadProducts(qp model.QueryPagination) ([]model.Product, int64
 	var list []model.Product
 	var ttl int64
 
-	s.db.Find(&list).Count(&ttl)
-	err := s.db.Preload("UOM").Scopes(Paginate(qp)).Find(&list).Error
+	s.db.Where("name like ? and description like ?", "%"+qp.Name+"%", "%"+qp.Description+"%").Find(&list).Count(&ttl)
+	err := s.db.Where("name like ? and description like ?", "%"+qp.Name+"%", "%"+qp.Description+"%").Preload("UOM").Scopes(Paginate(qp)).Find(&list).Error
 	if err != nil {
 		return list, ttl, err
 	}

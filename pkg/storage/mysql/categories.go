@@ -26,10 +26,18 @@ func (s *Storage) ReadCategories(qp model.QueryPagination) ([]model.Category, in
 	var list []model.Category
 	var ttl int64
 
-	s.db.Find(&list).Count(&ttl)
-	err := s.db.Scopes(Paginate(qp)).Find(&list).Error
-	if err != nil {
-		return list, ttl, err
+	if qp.Name != "" {
+		s.db.Find(&list).Count(&ttl)
+		err := s.db.Where("name like ?", "%"+qp.Name+"%").Scopes(Paginate(qp)).Find(&list).Error
+		if err != nil {
+			return list, ttl, err
+		}
+	} else {
+		s.db.Find(&list).Count(&ttl)
+		err := s.db.Scopes(Paginate(qp)).Find(&list).Error
+		if err != nil {
+			return list, ttl, err
+		}
 	}
 
 	return list, ttl, nil

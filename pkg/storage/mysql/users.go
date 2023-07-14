@@ -26,8 +26,8 @@ func (s *Storage) ReadUsers(qp model.QueryPagination) ([]model.User, int64, erro
 	var list []model.User
 	var ttl int64
 
-	s.db.Find(&list).Count(&ttl)
-	err := s.db.Scopes(Paginate(qp)).Find(&list).Error
+	s.db.Where("full_name like ? and email like ?", "%"+qp.FullName+"%", "%"+qp.Email+"%").Find(&list).Count(&ttl)
+	err := s.db.Where("full_name like ? and email like ?", "%"+qp.FullName+"%", "%"+qp.Email+"%").Scopes(Paginate(qp)).Find(&list).Error
 	if err != nil {
 		return list, ttl, err
 	}
