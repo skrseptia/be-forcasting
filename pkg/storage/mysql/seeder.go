@@ -177,22 +177,29 @@ func seedDB(s *Storage) error {
 
 				for k := 0; k < tl; k++ {
 					prd := products[rand.Intn(len(products))]
-					qty := rand.Intn(5) + 1
-					subTotal := prd.Price * float64(qty)
-					lines = append(lines, model.TransactionLine{
-						Model:         model.Model{CreatedAt: date, UpdatedAt: date},
-						TransactionID: id,
-						ProductID:     prd.ID,
-						Code:          prd.Code,
-						Name:          prd.Name,
-						Description:   prd.Description,
-						Qty:           float64(qty),
-						UOM:           prd.UOM.Name,
-						Price:         prd.Price,
-						SubTotal:      subTotal,
-					})
 
-					total += subTotal
+					for _, row := range lines {
+						if row.ProductID == prd.ID {
+							continue
+						}
+
+						qty := rand.Intn(5) + 1
+						subTotal := prd.Price * float64(qty)
+						lines = append(lines, model.TransactionLine{
+							Model:         model.Model{CreatedAt: date, UpdatedAt: date},
+							TransactionID: id,
+							ProductID:     prd.ID,
+							Code:          prd.Code,
+							Name:          prd.Name,
+							Description:   prd.Description,
+							Qty:           float64(qty),
+							UOM:           prd.UOM.Name,
+							Price:         prd.Price,
+							SubTotal:      subTotal,
+						})
+
+						total += subTotal
+					}
 				}
 
 				// create trx header
