@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"food_delivery_api/cfg"
 	"food_delivery_api/pkg/model"
-	"gorm.io/gorm"
 	"log"
 	"math/rand"
 	"strconv"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 func seedDB(s *Storage) error {
@@ -33,8 +34,8 @@ func seedDB(s *Storage) error {
 
 		// create user
 		user, err := s.CreateUser(model.User{
-			FullName: "Ikhsan Guntara",
-			Email:    "ikhsanguntara22@gmail.com",
+			FullName: "Andrian Prabowo",
+			Email:    "andrian@gmail.com",
 			Password: "password",
 			ImageURL: "www.image.com",
 			Phone:    "+6285927405167",
@@ -85,13 +86,13 @@ func seedDB(s *Storage) error {
 		// create product
 		kompos, err := s.CreateProduct(model.Product{
 			Code:        pupuk.Code,
-			Name:        "Pupuk Kompos",
-			Description: "Pupuk Kompos 1 Karung",
+			Name:        "Pupuk Kompos (5KG)",
+			Description: "Pupuk Kompos 1 Karung (5KG)",
 			ImageURL:    "https://images.tokopedia.net/img/cache/500-square/product-1/2019/12/24/2626509/2626509_6d2cc34f-e163-4d77-a494-3dd669483f99_720_720.jpg",
-			Qty:         10000,
+			Qty:         100,
 			UOMID:       int(pupuk.ID),
 			UOM:         karung,
-			Price:       20000,
+			Price:       25000,
 		})
 		if err != nil {
 			return err
@@ -100,13 +101,13 @@ func seedDB(s *Storage) error {
 
 		kandang, err := s.CreateProduct(model.Product{
 			Code:        pupuk.Code,
-			Name:        "Pupuk Kandang",
-			Description: "Pupuk Kandang 1 Karung",
+			Name:        "Pupuk Kandang (5KG)",
+			Description: "Pupuk Kandang 1 Karung (5KG)",
 			ImageURL:    "https://sikumis.com/media/frontend/products/pupuk(1)1.jpg",
-			Qty:         5000,
+			Qty:         500,
 			UOMID:       int(pupuk.ID),
 			UOM:         karung,
-			Price:       25000,
+			Price:       15000,
 		})
 		if err != nil {
 			return err
@@ -115,10 +116,10 @@ func seedDB(s *Storage) error {
 
 		pestina, err := s.CreateProduct(model.Product{
 			Code:        obat.Code,
-			Name:        "Pestina MSG 3",
-			Description: "Pestisida Nabati 1 Botol",
+			Name:        "Pestina MSG 3 (250ml)",
+			Description: "Pestisida Nabati 1 Botol (250ml)",
 			ImageURL:    "https://s2.bukalapak.com/img/79689491992/large/data.jpeg",
-			Qty:         25000,
+			Qty:         450,
 			UOMID:       int(obat.ID),
 			UOM:         botol,
 			Price:       49000,
@@ -130,13 +131,13 @@ func seedDB(s *Storage) error {
 
 		em4, err := s.CreateProduct(model.Product{
 			Code:        obat.Code,
-			Name:        "EM4 Pertanian",
-			Description: "EM4 Pertanian 1 Botol",
+			Name:        "EM4 Pertanian (1000ml)",
+			Description: "EM4 Pertanian 1 Botol (1000ml)",
 			ImageURL:    "https://images.tokopedia.net/img/cache/500-square/hDjmkQ/2021/6/10/c2b626fc-1e59-499b-80bc-7a10d9b55b29.jpg.webp?ect=4g",
-			Qty:         50000,
+			Qty:         500,
 			UOMID:       int(obat.ID),
 			UOM:         botol,
-			Price:       33000,
+			Price:       15000,
 		})
 		if err != nil {
 			return err
@@ -152,8 +153,8 @@ func seedDB(s *Storage) error {
 
 		// randomize user and customer
 		rand.New(rand.NewSource(time.Now().UnixNano()))
-		usr := []string{"Super Admin", "Ikhsan Guntara"}
-		cst := []string{"Tamara Isnin", "Sekar Septi", "John Doe"}
+		usr := []string{"Super Admin", "Andrian"}
+		cst := []string{"Joko", "Budi", "Sutarno", "Riski", "Maul"}
 
 		qp := model.QueryPagination{Page: 1, PageSize: 100}
 		products, _, err := s.ReadProducts(qp)
@@ -176,7 +177,7 @@ func seedDB(s *Storage) error {
 
 				for k := 0; k < tl; k++ {
 					prd := products[rand.Intn(len(products))]
-					qty := rand.Intn(10) + 1
+					qty := rand.Intn(5) + 1
 					subTotal := prd.Price * float64(qty)
 					lines = append(lines, model.TransactionLine{
 						Model:         model.Model{CreatedAt: date, UpdatedAt: date},
