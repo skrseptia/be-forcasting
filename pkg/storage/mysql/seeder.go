@@ -162,7 +162,7 @@ func seedDB(s *Storage) error {
 			return err
 		}
 
-		for i := 174; i > 0; i-- {
+		for i := 210; i > 0; i-- {
 			// max limit trx per day
 			limit := rand.Intn(10) + 1
 
@@ -175,12 +175,14 @@ func seedDB(s *Storage) error {
 				date := time.Now().AddDate(0, 0, -(i))
 				id += 1
 
+				myMap := make(map[string]int)
 				for k := 0; k < tl; k++ {
 					prd := products[rand.Intn(len(products))]
 
 					if k == 0 {
 						qty := rand.Intn(5) + 1
 						subTotal := prd.Price * float64(qty)
+						myMap["product"+strconv.Itoa(int(prd.ID))] = int(prd.ID)
 						lines = append(lines, model.TransactionLine{
 							Model:         model.Model{CreatedAt: date, UpdatedAt: date},
 							TransactionID: id,
@@ -196,11 +198,8 @@ func seedDB(s *Storage) error {
 
 						total += subTotal
 					} else {
-						for _, row := range lines {
-							if row.ProductID == prd.ID {
-								continue
-							}
-
+						if myMap["product"+strconv.Itoa(int(prd.ID))] != int(prd.ID) {
+							myMap["product"+strconv.Itoa(int(prd.ID))] = int(prd.ID)
 							qty := rand.Intn(5) + 1
 							subTotal := prd.Price * float64(qty)
 							lines = append(lines, model.TransactionLine{
