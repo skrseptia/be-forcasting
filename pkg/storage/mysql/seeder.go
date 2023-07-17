@@ -92,7 +92,7 @@ func seedDB(s *Storage) error {
 			Qty:         100,
 			UOMID:       int(pupuk.ID),
 			UOM:         karung,
-			Price:       25000,
+			Price:       18000,
 		})
 		if err != nil {
 			return err
@@ -119,10 +119,10 @@ func seedDB(s *Storage) error {
 			Name:        "Pestina MSG 3 (250ml)",
 			Description: "Pestisida Nabati 1 Botol (250ml)",
 			ImageURL:    "https://s2.bukalapak.com/img/79689491992/large/data.jpeg",
-			Qty:         450,
+			Qty:         100,
 			UOMID:       int(obat.ID),
 			UOM:         botol,
-			Price:       49000,
+			Price:       60000,
 		})
 		if err != nil {
 			return err
@@ -134,10 +134,10 @@ func seedDB(s *Storage) error {
 			Name:        "EM4 Pertanian (1000ml)",
 			Description: "EM4 Pertanian 1 Botol (1000ml)",
 			ImageURL:    "https://images.tokopedia.net/img/cache/500-square/hDjmkQ/2021/6/10/c2b626fc-1e59-499b-80bc-7a10d9b55b29.jpg.webp?ect=4g",
-			Qty:         500,
+			Qty:         100,
 			UOMID:       int(obat.ID),
 			UOM:         botol,
-			Price:       15000,
+			Price:       24500,
 		})
 		if err != nil {
 			return err
@@ -154,7 +154,7 @@ func seedDB(s *Storage) error {
 		// randomize user and customer
 		rand.New(rand.NewSource(time.Now().UnixNano()))
 		usr := []string{"Super Admin", "Andrian"}
-		cst := []string{"Joko", "Budi", "Sutarno", "Riski", "Maul"}
+		cst := []string{"Joko", "Budi", "Sutarno", "Riski", "Maul", "Arif", "Janu", "Tono", "Sutijo", "Kirno", "Paijo", "Prabowo", "Lek di", "lek Kam", "Lek Lor", "Soleh", "Galih", "Limar", "Maulana", "Satrio", "Purwadi", "kasijo", "Parmiyem", "Susilo", "Pramono", "Agung", "Catur", "Gery"}
 
 		qp := model.QueryPagination{Page: 1, PageSize: 100}
 		products, _, err := s.ReadProducts(qp)
