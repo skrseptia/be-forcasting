@@ -94,9 +94,9 @@ func NewStorage(c cfg.MySQL, goEnv string) (*Storage, error) {
 		return nil, err
 	}
 
-	if err = seedDB(s); err != nil {
-		return nil, err
-	}
+	// if err = seedDB(s); err != nil {
+	// 	return nil, err
+	// }
 
 	log.Println("MySQL connected")
 
