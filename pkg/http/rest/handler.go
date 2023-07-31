@@ -69,6 +69,7 @@ func Handler(s service.Service) *gin.Engine {
 		v1.GET("/reports/exponential-smoothing", getReportExponentialSmoothing(s))
 		v1.GET("/reports/monthly-exponential-smoothing", getReportMonthlyExponentialSmoothing(s))
 		v1.GET("/reports/arima", getReportArima(s))
+		v1.GET("/reports/expo", getReportExpo(s))
 	}
 
 	return r

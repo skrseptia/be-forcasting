@@ -176,3 +176,18 @@ func (s *Storage) ReadReportArima(qp model.QueryGetArima) ([]model.ArimaRow, err
 
 	return list, nil
 }
+
+func (s *Storage) ReadReportExpo(qp model.QueryGetExpo) ([]model.ExpoRow, error) {
+	var list []model.ExpoRow
+
+	s.db.Raw(`select date_format(date_sub(t.created_at, interval weekday(t.created_at) day), '%Y-%m-%d') as start_of_week,
+		date_format(date_add(t.created_at, interval 6 - weekday(t.created_at) day), '%Y-%m-%d') as end_of_week,
+       	sum(tl.qty) as total_qty
+		from transactions t left join transaction_lines tl on t.id = tl.transaction_id
+		where tl.product_id = ?
+		group by start_of_week, end_of_week
+		order by start_of_week`, qp.ProductID).
+		Scan(&list)
+
+	return list, nil
+}

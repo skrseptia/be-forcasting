@@ -24,9 +24,15 @@ type QueryGetExponentialSmoothing struct {
 }
 
 type QueryGetArima struct {
-	AutoRegressive   int    `form:"p"`
+	AutoRegressive   int    `form:"p" binding:"required"`
 	Differencing     int    `form:"d"`
-	MovingAverage    int    `form:"q"`
-	PredictionLength int    `form:"pl"`
-	ProductID        string `form:"product_id"`
+	MovingAverage    int    `form:"q" binding:"required"`
+	PredictionLength int    `form:"pl" binding:"required"`
+	ProductID        string `form:"product_id" binding:"required"`
+}
+
+type QueryGetExpo struct {
+	Alpha            float64 `form:"alpha" binding:"required"`
+	PredictionLength int     `form:"pl" binding:"required"`
+	ProductID        string  `form:"product_id" binding:"required"`
 }

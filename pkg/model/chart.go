@@ -85,3 +85,19 @@ type ArimaRow struct {
 	EndOfWeek   string `json:"end_of_week"`
 	TotalQty    int    `json:"total_qty"`
 }
+
+type ExpoChart struct {
+	ChartType         string    `json:"chart_type"`
+	Labels            []string  `json:"labels"`
+	Datasets          []Dataset `json:"datasets"`
+	Actual            []float64 `json:"actual"`
+	Smoothed          []float64 `json:"smoothed"`
+	Prediction        []float64 `json:"prediction"`
+	MeanAbsoluteError float64   `json:"mean_absolute_error"`
+}
+
+type ExpoRow struct {
+	StartOfWeek string `json:"start_of_week"`
+	EndOfWeek   string `json:"end_of_week"`
+	TotalQty    int    `json:"total_qty"`
+}

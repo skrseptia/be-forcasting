@@ -66,6 +66,7 @@ type RepositoryMySQL interface {
 	ReadReportChart() (model.Chart, error)
 	ReadReportExponentialSmoothing(qp model.QueryGetExponentialSmoothing) ([]model.ExponentialSmoothingRow, error)
 	ReadReportArima(qp model.QueryGetArima) ([]model.ArimaRow, error)
+	ReadReportExpo(qp model.QueryGetExpo) ([]model.ExpoRow, error)
 }
 
 type Storage struct {
