@@ -69,3 +69,22 @@ func getReportMonthlyExponentialSmoothing(s service.Service) gin.HandlerFunc {
 		c.JSON(http.StatusOK, Response{Success: true, Data: res})
 	}
 }
+
+func getReportArima(s service.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		qp := model.QueryGetArima{}
+		err := c.ShouldBindQuery(&qp)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		res, err := s.GetReportArima(qp)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, Response{Error: err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, Response{Success: true, Data: res})
+	}
+}

@@ -52,6 +52,7 @@ type Service interface {
 	GetReportChart() (model.Chart, error)
 	GetReportExponentialSmoothing(model.QueryGetExponentialSmoothing) (model.ExponentialSmoothingChart, error)
 	GetReportMonthlyExponentialSmoothing(model.QueryGetExponentialSmoothing) ([]model.MonthlyExponentialSmoothingDataset, error)
+	GetReportArima(model.QueryGetArima) (model.ArimaChart, error)
 }
 
 type service struct {

@@ -70,3 +70,18 @@ type ExponentialSmoothingDataset struct {
 	Forecast    int    `json:"forecast"`
 	Formulation string `json:"formulation"`
 }
+
+type ArimaChart struct {
+	ChartType         string    `json:"chart_type"`
+	Labels            []string  `json:"labels"`
+	Datasets          []Dataset `json:"datasets"`
+	Actual            []float64 `json:"actual"`
+	Predicted         []float64 `json:"predicted"`
+	MeanAbsoluteError float64   `json:"mean_absolute_error"`
+}
+
+type ArimaRow struct {
+	StartOfWeek string `json:"start_of_week"`
+	EndOfWeek   string `json:"end_of_week"`
+	TotalQty    int    `json:"total_qty"`
+}

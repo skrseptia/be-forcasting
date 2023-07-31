@@ -13,7 +13,7 @@ type QueryGetTransactions struct {
 	StartDate string `form:"start_date"`
 	EndDate   string `form:"end_date"`
 	Customer  string `form:"customer"`
-	CreatedBy  string `form:"created_by"`
+	CreatedBy string `form:"created_by"`
 	QueryPagination
 }
 
@@ -21,4 +21,12 @@ type QueryGetExponentialSmoothing struct {
 	StartDate string `form:"start_date"`
 	EndDate   string `form:"end_date"`
 	ProductID string `form:"product_id"`
+}
+
+type QueryGetArima struct {
+	AutoRegressive   int    `form:"p"`
+	Differencing     int    `form:"d"`
+	MovingAverage    int    `form:"q"`
+	PredictionLength int    `form:"pl"`
+	ProductID        string `form:"product_id"`
 }
