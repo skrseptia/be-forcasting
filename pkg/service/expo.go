@@ -47,8 +47,13 @@ func (s *service) GetReportExpo(qp model.QueryGetExpo) (model.ExpoChart, error) 
 		predictionData[i] = math.Round(predictionData[i])
 	}
 
-	// count MAE
-	mae := countMAE(actual, smoothedData)
+	// Menghitung MAE, MSE, dan MAPE untuk hasil peramalan
+	mae, mse := countMAEAndMSE(actual, smoothedData)
+	mape := countMAPE(actual, smoothedData)
+
+	fmt.Println("\nMean Absolute Error (MAE) untuk hasil peramalan:", mae)
+	fmt.Println("Mean Squared Error (MSE) untuk hasil peramalan:", mse)
+	fmt.Println("Mean Absolute Percentage Error (MAPE) untuk hasil peramalan:", mape)
 
 	// combine smoothed and prediction
 	var combined []int
@@ -81,6 +86,8 @@ func (s *service) GetReportExpo(qp model.QueryGetExpo) (model.ExpoChart, error) 
 	obj.Smoothed = smoothedData
 	obj.Prediction = predictionData
 	obj.MeanAbsoluteError = mae
+	obj.MSE = mse
+	obj.MAPE = mape
 
 	return obj, nil
 }
@@ -98,18 +105,40 @@ func expoSmoothing(data []float64, alpha float64) []float64 {
 	return smoothedData
 }
 
-func countMAE(actualData, predictedData []float64) float64 {
+func countMAEAndMSE(actualData, predictedData []float64) (float64, float64) {
 	if len(actualData) != len(predictedData) {
 		panic("Panjang data aktual dan data prediksi harus sama")
 	}
 
-	totalAbsoluteError := 0.0
 	n := float64(len(actualData))
+	totalAbsoluteError := 0.0
+	totalSquaredError := 0.0
 
 	for i := 0; i < len(actualData); i++ {
-		totalAbsoluteError += math.Abs(actualData[i] - predictedData[i])
+		absoluteError := math.Abs(actualData[i] - predictedData[i])
+		totalAbsoluteError += absoluteError
+		squaredError := math.Pow(absoluteError, 2)
+		totalSquaredError += squaredError
 	}
 
 	mae := totalAbsoluteError / n
-	return mae
+	mse := totalSquaredError / n
+	return mae, mse
+}
+
+func countMAPE(actualData, predictedData []float64) float64 {
+	if len(actualData) != len(predictedData) {
+		panic("Panjang data aktual dan data prediksi harus sama")
+	}
+
+	n := float64(len(actualData))
+	totalAbsolutePercentageError := 0.0
+
+	for i := 0; i < len(actualData); i++ {
+		percentageError := math.Abs((actualData[i] - predictedData[i]) / actualData[i])
+		totalAbsolutePercentageError += percentageError
+	}
+
+	mape := (totalAbsolutePercentageError / n) * 100.0
+	return mape
 }

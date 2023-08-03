@@ -96,6 +96,8 @@ type ExpoChart struct {
 	Smoothed          []float64 `json:"smoothed"`
 	Prediction        []float64 `json:"prediction"`
 	MeanAbsoluteError float64   `json:"mean_absolute_error"`
+	MSE               float64   `json:"mse"`
+	MAPE              float64   `json:"mape"`
 }
 
 type ExpoRow struct {
