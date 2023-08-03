@@ -78,6 +78,8 @@ type ArimaChart struct {
 	Actual            []float64 `json:"actual"`
 	Predicted         []float64 `json:"predicted"`
 	MeanAbsoluteError float64   `json:"mean_absolute_error"`
+	MSE               float64   `json:"mse"`
+	MAPE              float64   `json:"mape"`
 }
 
 type ArimaRow struct {

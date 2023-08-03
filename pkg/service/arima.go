@@ -9,6 +9,7 @@ import (
 
 func (s *service) GetReportArima(qp model.QueryGetArima) (model.ArimaChart, error) {
 	var obj model.ArimaChart
+	var combined []int
 
 	// get total qty from database for all products
 	list, err := s.rmy.ReadReportArima(qp)
@@ -31,24 +32,56 @@ func (s *service) GetReportArima(qp model.QueryGetArima) (model.ArimaChart, erro
 	q := qp.MovingAverage
 	pl := qp.PredictionLength
 
+	println(q, d, q, pl, "paramater")
+
 	// create prediction
 	predictions := predictARIMA(actual, p, d, q, pl)
 
-	// calculate MAE
-	mae := calculateMAE(actual[len(actual)-pl:], predictions)
+	// // calculate MAE
+	// mae := calculateMAE(actual[len(actual)-pl:], predictions)
 
-	// combine actual and prediction
-	var combined []int
+	// Tampilkan hasil data asli
+	fmt.Println("Data Asli:")
+	for i, val := range actual {
+		fmt.Printf("Minggu %d: %.2f\n", i+1, val)
+	}
 
 	// add actual and convert to int
 	for _, v := range actual {
 		combined = append(combined, int(v))
 	}
 
-	// add predictions and convert to int
-	for _, v := range predictions {
-		combined = append(combined, int(v))
+	// Tampilkan hasil prediksi
+	fmt.Println("Hasil Prediksi (Bentuk Asli):")
+	for i, pred := range predictions {
+		combined = append(combined, int(math.Round(pred+actual[len(actual)-1])))
+		obj.Predicted = append(obj.Predicted, math.Round(pred+actual[len(actual)-1]))
+		fmt.Printf("Minggu %d: %.f\n", len(actual)+i+1, math.Round(pred+actual[len(actual)-1]))
 	}
+
+	// Hitung MAE
+	mae := calculateMAE(actual[len(actual)-pl:], predictions)
+	fmt.Printf("Mean Absolute Error (MAE): %.2f\n", mae)
+
+	// Hitung MSE
+	mse := calculateMSE(actual[len(actual)-pl:], predictions)
+	fmt.Printf("Mean Squared Error (MSE): %.2f\n", mse)
+
+	// Hitung MAPE
+	mape := calculateMAPE(actual[len(actual)-pl:], predictions)
+	fmt.Printf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", mape)
+
+	// combine actual and prediction
+
+	// add actual and convert to int
+	// for _, v := range actual {
+	// 	combined = append(combined, int(v))
+	// }
+
+	// add predictions and convert to int
+	// for _, v := range predictions {
+	// 	combined = append(combined, int(v))
+	// }
 
 	var labels []string
 	for i := range combined {
@@ -62,10 +95,100 @@ func (s *service) GetReportArima(qp model.QueryGetArima) (model.ArimaChart, erro
 	obj.Labels = labels
 	obj.Datasets = []model.Dataset{{Label: product.Name, UOM: product.UOM.Name, Data: combined}}
 	obj.Actual = actual
-	obj.Predicted = predictions
+	// obj.Predicted = predictions
 	obj.MeanAbsoluteError = mae
+	obj.MSE = mse
+	obj.MAPE = mape
+
+	fmt.Println("obj", obj)
 
 	return obj, nil
+}
+
+// Fungsi untuk menghitung rata-rata dari sebuah slice float64
+func mean(data []float64) float64 {
+	sum := 0.0
+	for _, val := range data {
+		sum += val
+	}
+	return sum / float64(len(data))
+}
+
+// Fungsi untuk menghitung selisih data dengan nilai rata-rata
+func subtractMean(data []float64) []float64 {
+	meanValue := mean(data)
+	result := make([]float64, len(data))
+	for i, val := range data {
+		result[i] = val - meanValue
+	}
+	return result
+}
+
+// Fungsi untuk menghitung varians dari sebuah slice float64
+func variance(data []float64) float64 {
+	meanValue := mean(data)
+	sumSquaredDiff := 0.0
+	for _, val := range data {
+		diff := val - meanValue
+		sumSquaredDiff += diff * diff
+	}
+	return sumSquaredDiff / float64(len(data)-1)
+}
+
+// Fungsi untuk menghitung autokorelasi
+func autocorrelation(data []float64, lag int) float64 {
+	n := len(data)
+	meanData := mean(data)
+	varianceData := variance(data)
+
+	var numerator, denominator float64
+	for i := 0; i < n-lag; i++ {
+		numerator += (data[i] - meanData) * (data[i+lag] - meanData)
+	}
+	denominator = float64(n-lag) * varianceData
+
+	return numerator / denominator
+}
+
+// Fungsi untuk menghitung koefisien autoregressive (AR)
+func calculateARCoefficients(data []float64, p int) []float64 {
+	coefficients := make([]float64, p)
+
+	for i := 1; i <= p; i++ {
+		coefficients[i-1] = autocorrelation(data, i)
+	}
+
+	return coefficients
+}
+
+// Fungsi untuk menghitung residual dari model ARIMA
+func calculateResidual(data []float64, arCoefficients []float64) []float64 {
+	n := len(data)
+	p := len(arCoefficients)
+	residual := make([]float64, n-p)
+
+	copy(residual, data[:p])
+
+	for i := p; i < n; i++ {
+		prediction := float64(0)
+		for j := 0; j < p; j++ {
+			prediction += arCoefficients[j] * data[i-j-1]
+		}
+		residual = append(residual, data[i]-prediction)
+	}
+
+	return residual
+}
+
+// Fungsi untuk menghitung moving average (MA)
+func calculateMACoefficients(residual []float64, q int) []float64 {
+	coefficients := make([]float64, q)
+
+	for i := 1; i <= q; i++ {
+		coefficients[i-1] = autocorrelation(residual, i)
+	}
+
+	return coefficients
 }
 
 // Fungsi untuk melakukan prediksi menggunakan model ARIMA
@@ -119,82 +242,6 @@ func predictARIMA(data []float64, p, d, q, predictionLength int) []float64 {
 	return residual[len(residual)-predictionLength:]
 }
 
-// Fungsi untuk menghitung koefisien autoregressive (AR)
-func calculateARCoefficients(data []float64, p int) []float64 {
-	coefficients := make([]float64, p)
-
-	for i := 1; i <= p; i++ {
-		coefficients[i-1] = autocorrelation(data, i)
-	}
-
-	return coefficients
-}
-
-// Fungsi untuk menghitung autokorelasi
-func autocorrelation(data []float64, lag int) float64 {
-	n := len(data)
-	meanData := mean(data)
-	varianceData := variance(data)
-
-	var numerator, denominator float64
-	for i := 0; i < n-lag; i++ {
-		numerator += (data[i] - meanData) * (data[i+lag] - meanData)
-	}
-	denominator = float64(n-lag) * varianceData
-
-	return numerator / denominator
-}
-
-// Fungsi untuk menghitung rata-rata dari sebuah slice float64
-func mean(data []float64) float64 {
-	sum := 0.0
-	for _, val := range data {
-		sum += val
-	}
-	return sum / float64(len(data))
-}
-
-// Fungsi untuk menghitung varians dari sebuah slice float64
-func variance(data []float64) float64 {
-	meanValue := mean(data)
-	sumSquaredDiff := 0.0
-	for _, val := range data {
-		diff := val - meanValue
-		sumSquaredDiff += diff * diff
-	}
-	return sumSquaredDiff / float64(len(data)-1)
-}
-
-// Fungsi untuk menghitung residual dari model ARIMA
-func calculateResidual(data []float64, arCoefficients []float64) []float64 {
-	n := len(data)
-	p := len(arCoefficients)
-	residual := make([]float64, n-p)
-
-	copy(residual, data[:p])
-
-	for i := p; i < n; i++ {
-		prediction := float64(0)
-		for j := 0; j < p; j++ {
-			prediction += arCoefficients[j] * data[i-j-1]
-		}
-		residual = append(residual, data[i]-prediction)
-	}
-
-	return residual
-}
-
-// Fungsi untuk menghitung moving average (MA)
-func calculateMACoefficients(residual []float64, q int) []float64 {
-	coefficients := make([]float64, q)
-
-	for i := 1; i <= q; i++ {
-		coefficients[i-1] = autocorrelation(residual, i)
-	}
-
-	return coefficients
-}
-
 // Fungsi untuk melakukan inverse ARIMA
 func inverseARIMA(residual []float64, p, d int, arCoefficients []float64) []float64 {
 	n := len(residual)
@@ -235,3 +282,36 @@ func calculateMAE(actual, predicted []float64) float64 {
 
 	return sum / float64(len(actual))
 }
+
+// Fungsi untuk menghitung Mean Squared Error (MSE)
+func calculateMSE(actual, predicted []float64) float64 {
+	if len(actual) != len(predicted) {
+		panic("Length of actual and predicted slices should be the same.")
+	}
+
+	sum := 0.0
+	for i := 0; i < len(actual); i++ {
+		diff := actual[i] - predicted[i]
+		sum += diff * diff
+	}
+
+	return sum / float64(len(actual))
+}
+
+// Fungsi untuk menghitung Mean Absolute Percentage Error (MAPE)
+func calculateMAPE(actual, predicted []float64) float64 {
+	if len(actual) != len(predicted) {
+		panic("Length of actual and predicted slices should be the same.")
+	}
+
+	sumPercentageError := 0.0
+	for i := 0; i < len(actual); i++ {
+		percentageError := math.Abs((actual[i] - predicted[i]) / actual[i])
+		sumPercentageError += percentageError
+	}
+
+	mape := (sumPercentageError / float64(len(actual))) * 100.0
+	return mape
+}
+
+// Lakukan prediksi
