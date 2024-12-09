@@ -3,7 +3,7 @@ auth:
 
 mysql:
   dialect: mysql
-  dsn: root:P@ssw0rd!@tcp(213.190.4.205:3306)/andhiga_pupuk_db?charset=utf8mb4&parseTime=True&loc=Local
+  dsn: root:@tcp(localhost:3306)/andhiga_pupuk_db?charset=utf8mb4&parseTime=True&loc=Local
 
 server:
   host: 127.0.0.1
