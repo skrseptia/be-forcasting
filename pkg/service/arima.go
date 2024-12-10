@@ -11,15 +11,15 @@ func (s *service) GetReportArima(qp model.QueryGetArima) (model.ArimaChart, erro
 	var obj model.ArimaChart
 	var combined []int
 
-	// get total qty from database for all products
+	// Get total qty from database for all products
 	list, err := s.rmy.ReadReportArima(qp)
 	if err != nil {
 		return obj, err
 	}
 
-	// handle if return empty data from database
-	if list == nil {
-		return obj, nil
+	// Handle empty or nil data from database
+	if list == nil || len(list) == 0 {
+			return obj, fmt.Errorf("no data retrieved from the database")
 	}
 
 	var actual []float64
@@ -31,22 +31,28 @@ func (s *service) GetReportArima(qp model.QueryGetArima) (model.ArimaChart, erro
 	d := qp.Differencing
 	q := qp.MovingAverage
 	pl := qp.PredictionLength
+	P := qp.SeasonalAR
+	D := qp.SeasonalDiff
+	Q := qp.SeasonalMA
+	sPeriod := qp.SeasonalPeriod
 
-	println(q, d, q, pl, "paramater")
+	// Ensure prediction length is valid
+	if pl > len(actual) {
+			return obj, fmt.Errorf("prediction length exceeds available data points")
+	}
 
-	// create prediction
-	predictions := predictARIMA(actual, p, d, q, pl)
+	// Create prediction
+	predictions := predictSARIMA(actual, p, d, q, P, D, Q, sPeriod, pl)
 
-	// // calculate MAE
-	// mae := calculateMAE(actual[len(actual)-pl:], predictions)
-
-	// Tampilkan hasil data asli
-	fmt.Println("Data Asli:")
+	// Print original data for reference
+	fmt.Println("Original Data:")
 	for i, val := range actual {
 		fmt.Printf("Minggu %d: %.2f\n", i+1, val)
 	}
 
-	// add actual and convert to int
+	fmt.Println("Predictions:", predictions)
+
+	// Combine actual and predictions into a dataset
 	for _, v := range actual {
 		combined = append(combined, int(v))
 	}
@@ -54,34 +60,17 @@ func (s *service) GetReportArima(qp model.QueryGetArima) (model.ArimaChart, erro
 	// Tampilkan hasil prediksi
 	fmt.Println("Hasil Prediksi (Bentuk Asli):")
 	for i, pred := range predictions {
-		combined = append(combined, int(math.Round(pred+actual[len(actual)-1])))
-		obj.Predicted = append(obj.Predicted, math.Round(pred+actual[len(actual)-1]))
-		fmt.Printf("Minggu %d: %.f\n", len(actual)+i+1, math.Round(pred+actual[len(actual)-1]))
+		combined = append(combined, int(math.Round(pred)))
+		obj.Predicted = append(obj.Predicted, math.Round(pred))
+		fmt.Printf("Minggu %d: %.f\n", len(actual)+i+1, math.Round(pred))
 	}
 
 	// Hitung MAE
 	mae := calculateMAE(actual[len(actual)-pl:], predictions)
-	fmt.Printf("Mean Absolute Error (MAE): %.2f\n", mae)
-
-	// Hitung MSE
 	mse := calculateMSE(actual[len(actual)-pl:], predictions)
-	fmt.Printf("Mean Squared Error (MSE): %.2f\n", mse)
-
-	// Hitung MAPE
 	mape := calculateMAPE(actual[len(actual)-pl:], predictions)
-	fmt.Printf("Mean Absolute Percentage Error (MAPE): %.2f%%\n", mape)
 
-	// combine actual and prediction
-
-	// add actual and convert to int
-	// for _, v := range actual {
-	// 	combined = append(combined, int(v))
-	// }
-
-	// add predictions and convert to int
-	// for _, v := range predictions {
-	// 	combined = append(combined, int(v))
-	// }
+	fmt.Printf("MAE: %.2f, MSE: %.2f, MAPE: %.2f%%\n", mae, mse, mape)
 
 	var labels []string
 	for i := range combined {
@@ -99,8 +88,6 @@ func (s *service) GetReportArima(qp model.QueryGetArima) (model.ArimaChart, erro
 	obj.MeanAbsoluteError = mae
 	obj.MSE = mse
 	obj.MAPE = mape
-
-	fmt.Println("obj", obj)
 
 	return obj, nil
 }
@@ -192,8 +179,61 @@ func calculateMACoefficients(residual []float64, q int) []float64 {
 }
 
 // Fungsi untuk melakukan prediksi menggunakan model ARIMA
-func predictARIMA(data []float64, p, d, q, predictionLength int) []float64 {
-	// Lakukan differencing jika d > 0
+// func predictARIMA(data []float64, p, d, q, predictionLength int) []float64 {
+// 	// Lakukan differencing jika d > 0
+// 	for i := 0; i < d; i++ {
+// 		diffData := make([]float64, len(data)-1)
+// 		for j := 1; j < len(data); j++ {
+// 			diffData[j-1] = data[j] - data[j-1]
+// 		}
+// 		data = diffData
+// 	}
+
+// 	arCoefficients := calculateARCoefficients(data, p)
+
+// 	// Lakukan residual calculation
+// 	residual := calculateResidual(data, arCoefficients)
+
+// 	// Lakukan moving average jika q > 0
+// 	if q > 0 {
+// 		maCoefficients := calculateMACoefficients(residual, q)
+
+// 		for i := 0; i < predictionLength; i++ {
+// 			prediction := float64(0)
+// 			for j := 1; j <= q; j++ {
+// 				if len(residual) >= j {
+// 					prediction += maCoefficients[j-1] * residual[len(residual)-j]
+// 				}
+// 			}
+// 			residual = append(residual, prediction)
+// 		}
+// 	}
+
+// 	// Lakukan inverse differencing jika d > 0
+// 	if d > 0 {
+// 		for i := 0; i < d; i++ {
+// 			inverseDiffData := make([]float64, len(residual))
+// 			inverseDiffData[0] = data[len(data)-1]
+// 			for j := 1; j < len(residual); j++ {
+// 				inverseDiffData[j] = inverseDiffData[j-1] + residual[j-1]
+// 			}
+// 			residual = inverseDiffData
+// 		}
+// 	}
+
+// 	// Lakukan inverse AR jika p > 0
+// 	if p > 0 {
+// 		residual = inverseARIMA(residual, p, d, arCoefficients)
+// 	}
+
+// 	return residual[len(residual)-predictionLength:]
+// }
+
+// Fungsi untuk melakukan prediksi menggunakan model SARIMA
+func predictSARIMA(data []float64, p, d, q, P, D, Q, s, predictionLength int) []float64 {
+	fmt.Println("==== Predict SARIMA ====")
+
+	// Lakukan differencing reguler jika d > 0
 	for i := 0; i < d; i++ {
 		diffData := make([]float64, len(data)-1)
 		for j := 1; j < len(data); j++ {
@@ -202,27 +242,60 @@ func predictARIMA(data []float64, p, d, q, predictionLength int) []float64 {
 		data = diffData
 	}
 
+	// Lakukan differencing musiman jika D > 0
+	for i := 0; i < D; i++ {
+		seasonalDiffData := make([]float64, len(data)-s)
+		for j := s; j < len(data); j++ {
+			seasonalDiffData[j-s] = data[j] - data[j-s]
+		}
+		data = seasonalDiffData
+	}
+
+	// Hitung koefisien AR biasa dan musiman
 	arCoefficients := calculateARCoefficients(data, p)
+	seasonalARCoefficients := calculateARCoefficients(data, P*s)
 
-	// Lakukan residual calculation
+	// Lakukan residual calculation (termasuk musiman)
 	residual := calculateResidual(data, arCoefficients)
+	seasonalResidual := calculateResidual(data, seasonalARCoefficients)
 
-	// Lakukan moving average jika q > 0
-	if q > 0 {
+	// Lakukan moving average jika q > 0 atau Q > 0
+	if q > 0 || Q > 0 {
 		maCoefficients := calculateMACoefficients(residual, q)
+		seasonalMACoefficients := calculateMACoefficients(seasonalResidual, Q*s)
 
 		for i := 0; i < predictionLength; i++ {
 			prediction := float64(0)
+			// Regular MA contribution
 			for j := 1; j <= q; j++ {
-				if len(residual) >= j {
-					prediction += maCoefficients[j-1] * residual[len(residual)-j]
-				}
+					if len(residual) >= j {
+							prediction += maCoefficients[j-1] * residual[len(residual)-j]
+					}
+			}
+			// Seasonal MA contribution
+			for j := 1; j <= Q; j++ {
+					if len(seasonalResidual) >= j*s {
+							prediction += seasonalMACoefficients[j-1] * seasonalResidual[len(seasonalResidual)-j*s]
+					}
 			}
 			residual = append(residual, prediction)
 		}
+	
 	}
 
-	// Lakukan inverse differencing jika d > 0
+	// Lakukan inverse differencing musiman jika D > 0
+	if D > 0 {
+		for i := 0; i < D; i++ {
+			inverseSeasonalDiffData := make([]float64, len(residual))
+			inverseSeasonalDiffData[0] = data[len(data)-1]
+			for j := s; j < len(residual); j++ {
+				inverseSeasonalDiffData[j] = residual[j] + residual[j-s]
+			}
+			residual = inverseSeasonalDiffData
+		}
+	}
+
+	// Lakukan inverse differencing biasa jika d > 0
 	if d > 0 {
 		for i := 0; i < d; i++ {
 			inverseDiffData := make([]float64, len(residual))
@@ -234,7 +307,7 @@ func predictARIMA(data []float64, p, d, q, predictionLength int) []float64 {
 		}
 	}
 
-	// Lakukan inverse AR jika p > 0
+	// Lakukan inverse AR biasa jika p > 0
 	if p > 0 {
 		residual = inverseARIMA(residual, p, d, arCoefficients)
 	}
@@ -261,8 +334,8 @@ func inverseARIMA(residual []float64, p, d int, arCoefficients []float64) []floa
 		for i := n - 1; i >= p; i-- {
 			prediction := float64(0)
 			for j := 0; j < p; j++ {
-				prediction += arCoefficients[j] * data[i-j-1]
-			}
+					prediction += arCoefficients[j] * data[i-j-1]
+				}
 			data[i-p] = data[i-p] + prediction
 		}
 	}
@@ -301,13 +374,13 @@ func calculateMSE(actual, predicted []float64) float64 {
 // Fungsi untuk menghitung Mean Absolute Percentage Error (MAPE)
 func calculateMAPE(actual, predicted []float64) float64 {
 	if len(actual) != len(predicted) {
-		panic("Length of actual and predicted slices should be the same.")
+			panic("Length of actual and predicted slices should be the same.")
 	}
 
 	sumPercentageError := 0.0
 	for i := 0; i < len(actual); i++ {
-		percentageError := math.Abs((actual[i] - predicted[i]) / actual[i])
-		sumPercentageError += percentageError
+					percentageError := math.Abs((actual[i] - predicted[i]) / actual[i])
+					sumPercentageError += percentageError
 	}
 
 	mape := (sumPercentageError / float64(len(actual))) * 100.0

@@ -27,6 +27,10 @@ type QueryGetArima struct {
 	AutoRegressive   int    `form:"p" binding:"required"`
 	Differencing     int    `form:"d"`
 	MovingAverage    int    `form:"q" binding:"required"`
+	SeasonalAR       int    `form:"P"`                     // Parameter Seasonal AR
+	SeasonalDiff     int    `form:"D"`                     // Parameter Seasonal Differencing
+	SeasonalMA       int    `form:"Q"`                     // Parameter Seasonal MA
+	SeasonalPeriod   int    `form:"s" binding:"required"`   // Seasonal Period (s)
 	PredictionLength int    `form:"pl" binding:"required"`
 	ProductID        string `form:"product_id" binding:"required"`
 }
