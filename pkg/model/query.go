@@ -37,6 +37,9 @@ type QueryGetArima struct {
 
 type QueryGetExpo struct {
 	Alpha            float64 `form:"alpha" binding:"required"`
+	Beta            	float64 `form:"beta" binding:"required"`
+	Gamma            float64 `form:"gamma" binding:"required"`
+	SeasonLength     int `form:"seasonLength" binding:"required"`
 	PredictionLength int     `form:"pl" binding:"required"`
 	ProductID        string  `form:"product_id" binding:"required"`
 }

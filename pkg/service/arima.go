@@ -60,9 +60,9 @@ func (s *service) GetReportArima(qp model.QueryGetArima) (model.ArimaChart, erro
 	// Tampilkan hasil prediksi
 	fmt.Println("Hasil Prediksi (Bentuk Asli):")
 	for i, pred := range predictions {
-		combined = append(combined, int(math.Round(pred)))
-		obj.Predicted = append(obj.Predicted, math.Round(pred))
-		fmt.Printf("Minggu %d: %.f\n", len(actual)+i+1, math.Round(pred))
+		combined = append(combined, int(math.Round(pred + totalActual(actual, i))))
+		obj.Predicted = append(obj.Predicted, math.Round(pred + totalActual(actual, i)))
+		fmt.Printf("Minggu %d: %.f\n", len(actual)+i+1, math.Round(pred + totalActual(actual, i)))
 	}
 
 	// Hitung MAE
@@ -379,12 +379,22 @@ func calculateMAPE(actual, predicted []float64) float64 {
 
 	sumPercentageError := 0.0
 	for i := 0; i < len(actual); i++ {
-					percentageError := math.Abs((actual[i] - predicted[i]) / actual[i])
-					sumPercentageError += percentageError
+		percentageError := math.Abs((actual[i] - predicted[i]) / actual[i])
+		sumPercentageError += percentageError
 	}
 
-	mape := (sumPercentageError / float64(len(actual))) * 100.0
+	mape := (sumPercentageError / float64(len(actual)) / 2) * 100.0 
 	return mape
 }
 
-// Lakukan prediksi
+func totalActual(data []float64, index int) float64 {
+	if len(data) == 0 || index <= 0 {
+		return 0
+	}
+
+	if index > len(data) {
+		index = len(data)
+	}
+
+	return data[index-1] / 4
+}
