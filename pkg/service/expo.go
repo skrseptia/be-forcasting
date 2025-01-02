@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"food_delivery_api/pkg/model"
 	"math"
+	"math/rand"
 	"strconv"
+	"time"
 )
 
 func (s *service) GetReportExpo(qp model.QueryGetExpo) (model.ExpoChart, error) {
@@ -97,12 +99,45 @@ func (s *service) GetReportExpo(qp model.QueryGetExpo) (model.ExpoChart, error) 
 
 	// return obj, nil
 	// #OLD# //
+	rand.Seed(time.Now().UnixNano())
+	factor := 0.4 + rand.Float64()*(0.9-0.4)
 
+	fmt.Println("\nfactor", factor)
+
+	historicalAverage := 0.0
+	for _, value := range actual {
+		historicalAverage += value
+	}
+	historicalAverage /= float64(len(actual))
+	
 	// calculate predictions based on prediction length
 	predictionData := make([]float64, pl)
 	for i := 0; i < pl; i++ {
 		idx := len(actual) + i
-		predictionData[i] = level[len(level)-1] + float64(i+1)*trend[len(trend)-1] + seasonal[idx%seasonLength]+ safeLast(actual, i)
+		basePrediction := level[len(level)-1] + float64(i+1)*trend[len(trend)-1] + seasonal[idx%seasonLength]+ safeLast(actual, i)
+
+		// Cegah prediksi negatif
+		if basePrediction < 0 {
+			basePrediction = 0
+		}
+	
+		// Cegah seasonal negatif
+		if seasonal[idx%seasonLength] < 0 {
+			seasonal[idx%seasonLength] = 0
+		}
+	
+		// Cegah prediksi menurun terlalu tajam
+		if i > 0 && basePrediction < predictionData[i-1]* 0.7 { // Tidak boleh turun lebih dari 10% dibandingkan sebelumnya
+			basePrediction = predictionData[i-1] * 0.88
+		}
+	
+		// Jaga prediksi tidak kurang dari rata-rata historis
+		if basePrediction < historicalAverage* 0.5 { // Minimum 70% dari rata-rata historis
+			basePrediction = historicalAverage * 0.77
+		}
+	
+		predictionData[i] = math.Round(basePrediction)
+
 	}
 
 	// round smoothedData and predictionData to remove decimals
