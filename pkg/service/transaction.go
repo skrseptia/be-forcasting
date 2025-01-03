@@ -18,6 +18,18 @@ func (s *service) AddTransaction(p model.Transaction, user string) (model.Transa
 	trx.CreatedBy = user
 	trx.Customer = p.Customer
 
+	if p.TrxDate != "" { // Jika TrxDate dikirim dari frontend
+    trx.CreatedAt, err = time.Parse("2006-01-02", p.TrxDate)
+    if err != nil {
+        return trx, errors.New("invalid date format, use YYYY-MM-DD")
+    }
+		parsedDate, err := time.Parse("2006-01-02", p.TrxDate)
+    if err != nil {
+        return trx, errors.New("invalid date format, use YYYY-MM-DD")
+    }
+    trx.TrxDate = parsedDate.Format("2006-01-02") // Konversi kembali ke string
+
+	} 
 	trx, err = s.rmy.CreateTransaction(trx)
 	if err != nil {
 		return trx, err
