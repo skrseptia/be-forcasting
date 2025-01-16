@@ -4,6 +4,7 @@ import (
 	"food_delivery_api/pkg/middleware"
 	"food_delivery_api/pkg/service"
 	"net/http"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -75,15 +76,15 @@ func Handler(s service.Service) *gin.Engine {
 }
 
 func setupCORS(r *gin.Engine) {
-	r.Use(cors.Default())
-	// r.Use(cors.New(cors.Config{
-	// 	AllowOrigins:     []string{"*"},
-	// 	AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-	// 	AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
-	// 	ExposeHeaders:    []string{},
-	// 	AllowCredentials: false,
-	// 	MaxAge:           1 * time.Minute,
-	// }))
+	// Configure CORS middleware
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 }
 
 func getHealthStatus(c *gin.Context) {
