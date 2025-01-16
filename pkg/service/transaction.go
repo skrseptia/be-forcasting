@@ -20,6 +20,8 @@ func (s *service) AddTransaction(p model.Transaction, user string) (model.Transa
 
 	if p.TrxDate != "" { // Jika TrxDate dikirim dari frontend
     trx.CreatedAt, err = time.Parse("2006-01-02", p.TrxDate)
+	trx.UpdatedAt, err = time.Parse("2006-01-02", p.TrxDate)
+
     if err != nil {
         return trx, errors.New("invalid date format, use YYYY-MM-DD")
     }
@@ -39,6 +41,7 @@ func (s *service) AddTransaction(p model.Transaction, user string) (model.Transa
 	var lines []model.TransactionLine
 	var total float64
 	var products []model.Product
+	parsedDate, err := time.Parse("2006-01-02", p.TrxDate)
 
 	for _, v := range p.TransactionLines {
 		product, err := s.GetProduct(model.Product{Model: model.Model{ID: v.ProductID}})
@@ -69,6 +72,8 @@ func (s *service) AddTransaction(p model.Transaction, user string) (model.Transa
 			UOM:           product.UOM.Name,
 			Price:         product.Price,
 			SubTotal:      subTotal,
+			CreatedAt:     parsedDate,
+			UpdatedAt:     parsedDate,	
 		})
 
 		total += subTotal
@@ -89,8 +94,9 @@ func (s *service) AddTransaction(p model.Transaction, user string) (model.Transa
 	trx.TransactionLines = lines
 
 	// reduce stock
-	for i, v := range products {
-		v.Qty -= lines[i].Qty
+	for _, v := range products {
+		v.Qty -= 0
+		// v.Qty -= lines[i].Qty
 		_, err = s.rmy.UpdateProduct(v)
 		if err != nil {
 			return trx, err

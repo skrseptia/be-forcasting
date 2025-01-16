@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type TransactionLine struct {
 	Model
 	TransactionID uint    `json:"transaction_id"`
@@ -11,4 +13,6 @@ type TransactionLine struct {
 	UOM           string  `json:"uom"`
 	Price         float64 `json:"price"`
 	SubTotal      float64 `json:"sub_total"`
+	CreatedAt     time.Time  `json:"created_at"` // Tambahkan ini
+	UpdatedAt     time.Time  `json:"updated_at"` // Tambahkan ini
 }

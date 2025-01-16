@@ -52,10 +52,10 @@ func (s *Storage) ReadTransactionsBetweenDate(qp model.QueryGetTransactions) ([]
 	cust := fmt.Sprintf("%%%s%%", qp.Customer)
 	createdBy := fmt.Sprintf("%%%s%%", qp.CreatedBy)
 
-	err = s.db.Find(&list).Where("customer LIKE ? and created_by LIKE ? AND created_at BETWEEN ? AND ?", cust, createdBy, qp.StartDate, qp.EndDate).
+	err = s.db.Find(&list).Where("customer LIKE ? and created_by LIKE ? AND DATE(created_at) BETWEEN ? AND ?", cust, createdBy, qp.StartDate, qp.EndDate).
 		Count(&ttl).Error
 	err = s.db.Preload("TransactionLines").
-		Where("customer LIKE ? and created_by LIKE ? AND created_at BETWEEN ? AND ?", cust, createdBy, qp.StartDate, qp.EndDate).
+		Where("customer LIKE ? and created_by LIKE ? AND DATE(created_at) BETWEEN ? AND ?", cust, createdBy, qp.StartDate, qp.EndDate).
 		Scopes(Paginate(qp.QueryPagination)).
 		Find(&list).Error
 
