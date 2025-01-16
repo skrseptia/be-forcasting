@@ -2,8 +2,6 @@ module food_delivery_api
 
 go 1.21.0
 
-toolchain go1.23.2
-
 require (
 	github.com/gin-contrib/cors v1.7.3
 	github.com/gin-gonic/gin v1.10.0
