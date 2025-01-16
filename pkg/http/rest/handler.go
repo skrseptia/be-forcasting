@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	cors "github.com/itsjamie/gin-cors"
+	"github.com/gin-contrib/cors"
 )
 
 func Handler(s service.Service) *gin.Engine {
@@ -76,17 +76,15 @@ func Handler(s service.Service) *gin.Engine {
 }
 
 func setupCORS(r *gin.Engine) {
-	r.Use(cors.Middleware(cors.Config{
-		Origins:         "*",
-		Methods:         "GET, PUT, PATCH, POST, DELETE, OPTIONS",
-		RequestHeaders:  "Origin, Authorization, Content-Type",
-		ExposedHeaders:  "",
-		MaxAge:          1 * time.Minute,
-		Credentials:     false,
-		ValidateHeaders: false,
-	}))
+    r.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{"*"},              
+        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}, 
+        AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
+        ExposeHeaders:    []string{},               
+        AllowCredentials: false,                
+        MaxAge:           1 * time.Minute,         
+    }))
 }
-
 func getHealthStatus(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "OK"})
 }
