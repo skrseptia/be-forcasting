@@ -18,6 +18,7 @@ func Handler(s service.Service) *gin.Engine {
 	// Public API
 	r.GET("/health", getHealthStatus)
 	r.POST("/api/v1/login", login(s))
+	r.POST("/api/v1/forgot-password", forgotPassword(s))
 
 	// Protected API
 	v1 := r.Group("/api/v1")

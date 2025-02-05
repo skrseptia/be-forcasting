@@ -4,8 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"food_delivery_api/pkg/model"
-	"github.com/xuri/excelize/v2"
 	"mime/multipart"
+
+	"github.com/xuri/excelize/v2"
 )
 
 func (s *service) AddUser(p model.User) (model.User, error) {
@@ -101,6 +102,14 @@ func (s *service) GetUser(p model.User) (model.User, error) {
 	obj.Password = ""
 
 	return obj, nil
+}
+
+func (s *service) GetUserPasswordByEmail(email string) (string, error) {
+    user, err := s.rmy.ReadUserByEmail(email)
+    if err != nil {
+        return "", err
+    }
+    return user.Password, nil
 }
 
 func (s *service) GetUserByEmailPassword(p model.User) (model.User, error) {

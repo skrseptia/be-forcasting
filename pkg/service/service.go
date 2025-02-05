@@ -13,6 +13,7 @@ type Service interface {
 	GetUsers(model.QueryPagination) ([]model.User, int64, error)
 	GetUser(model.User) (model.User, error)
 	GetUserByEmailPassword(model.User) (model.User, error)
+	GetUserPasswordByEmail(email string) (string, error) 
 	EditUser(model.User) (model.User, error)
 	RemoveUser(model.User) (model.User, error)
 

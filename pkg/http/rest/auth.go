@@ -25,6 +25,34 @@ type JWT struct {
 	Token string `json:"token"`
 }
 
+func forgotPassword(s service.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+			var body struct {
+					Email string `json:"email" binding:"required"`
+			}
+
+			// Bind JSON input
+			if err := c.ShouldBindJSON(&body); err != nil {
+					c.JSON(http.StatusBadRequest, AuthResponse{Error: err.Error()})
+					return
+			}
+
+			// Ambil password dari database
+			password, err := s.GetUserPasswordByEmail(body.Email)
+			if err != nil {
+					c.JSON(http.StatusNotFound, AuthResponse{Error: "Email not found"})
+					return
+			}
+
+			// Kirim response dengan password
+			c.JSON(http.StatusOK, AuthResponse{
+					Success: true,
+					Data:    map[string]string{"password": password},
+			})
+	}
+}
+
+
 func login(s service.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var body Auth

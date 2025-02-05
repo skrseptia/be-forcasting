@@ -5,9 +5,10 @@ import (
 	"food_delivery_api/pkg/model"
 	"math"
 	"math/rand"
-	"time"
 	"strconv"
+	"time"
 )
+
 
 func (s *service) GetReportArima(qp model.QueryGetArima) (model.ArimaChart, error) {
 	var obj model.ArimaChart
@@ -85,10 +86,9 @@ func (s *service) GetReportArima(qp model.QueryGetArima) (model.ArimaChart, erro
 		smoothedData[i] = math.Round(smoothedData[i] * factor) 
 	}
 
-	var labels []string
-	for i := range combined {
-		labels = append(labels, fmt.Sprintf("Week-%d", i+1))
-	}
+	startDate := time.Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC) 
+	labels := generateDateLabels(startDate, len(combined))
+
 
 	productID, _ := strconv.Atoi(qp.ProductID)
 	product, _ := s.rmy.ReadProduct(model.Product{Model: model.Model{ID: uint(productID)}})

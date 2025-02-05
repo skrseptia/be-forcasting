@@ -8,6 +8,23 @@ import (
 	"strconv"
 	"time"
 )
+func generateDateLabels(startDate time.Time, weeks int) []string {
+	var labels []string
+	for i := 0; i < weeks; i++ {
+			// Hitung tanggal awal dan akhir minggu
+			weekStart := startDate.AddDate(0, 0, 7*i)
+			weekEnd := weekStart.AddDate(0, 0, 6)
+
+			// Format tanggal menjadi "1 Jan-7 Jan"
+			label := fmt.Sprintf("%d %s - %d %s",
+					weekStart.Day(), weekStart.Month().String()[:3],
+					weekEnd.Day(), weekEnd.Month().String()[:3])
+
+			labels = append(labels, label)
+	}
+	return labels
+}
+
 
 func (s *service) GetReportExpo(qp model.QueryGetExpo) (model.ExpoChart, error) {
 	var obj model.ExpoChart
@@ -169,10 +186,8 @@ func (s *service) GetReportExpo(qp model.QueryGetExpo) (model.ExpoChart, error) 
 		combined = append(combined, int(v))
 	}
 
-	var labels []string
-	for i := range combined {
-		labels = append(labels, fmt.Sprintf("Week-%d", i+1))
-	}
+	startDate := time.Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC) 
+	labels := generateDateLabels(startDate, len(combined))
 
 	productID, _ := strconv.Atoi(qp.ProductID)
 	product, _ := s.rmy.ReadProduct(model.Product{Model: model.Model{ID: uint(productID)}})
