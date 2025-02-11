@@ -34,7 +34,8 @@ func (s *Storage) ReadTransactions(qp model.QueryGetTransactions) ([]model.Trans
 	err = s.db.Find(&list).Where("customer LIKE ? and created_by LIKE ?", cust, createdBy).Count(&ttl).Error
 	err = s.db.Preload("TransactionLines").
 		Where("customer LIKE ? and created_by LIKE ?", cust, createdBy).
-		Scopes(Paginate(qp.QueryPagination)).
+		// Hide pagination
+		// Scopes(Paginate(qp.QueryPagination)).
 		Find(&list).Error
 
 	if err != nil {
@@ -56,8 +57,8 @@ func (s *Storage) ReadTransactionsBetweenDate(qp model.QueryGetTransactions) ([]
 		Count(&ttl).Error
 	err = s.db.Preload("TransactionLines").
 		Where("customer LIKE ? and created_by LIKE ? AND DATE(created_at) BETWEEN ? AND ?", cust, createdBy, qp.StartDate, qp.EndDate).
-		// Group("DATE(created_at)").
-		Scopes(Paginate(qp.QueryPagination)).
+		// Hide pagination
+		// Scopes(Paginate(qp.QueryPagination)).
 		Find(&list).Error
 
 	if err != nil {

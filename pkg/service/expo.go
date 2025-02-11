@@ -16,9 +16,9 @@ func generateDateLabels(startDate time.Time, weeks int) []string {
 			weekEnd := weekStart.AddDate(0, 0, 6)
 
 			// Format tanggal menjadi "1 Jan-7 Jan"
-			label := fmt.Sprintf("%d %s - %d %s",
-					weekStart.Day(), weekStart.Month().String()[:3],
-					weekEnd.Day(), weekEnd.Month().String()[:3])
+			label := fmt.Sprintf("%d %s %d - %d %s %d",
+				weekStart.Day(), weekStart.Month().String()[:3], weekStart.Year(),
+				weekEnd.Day(), weekEnd.Month().String()[:3], weekEnd.Year())
 
 			labels = append(labels, label)
 	}
